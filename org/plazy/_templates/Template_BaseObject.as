@@ -22,11 +22,13 @@ package org.plazy._templates {
 		
 		public override function kill ():void {
 			CONFIG::LLOG { log('kill'); }
-			
+			super.kill();
 		}
 		
-		protected override function log (_t:String, _c:int = 0x000000):void {
-			super.log('SomePrefix ' + _t, _c);
+		CONFIG::LLOG {
+			protected override function log (_t:String, _c:uint = 0x000000):void {
+				super.log('SomePrefix ' + _t, _c);
+			}
 		}
 		
 	}
