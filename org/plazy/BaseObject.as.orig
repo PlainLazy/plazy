@@ -70,13 +70,9 @@ package org.plazy {
 			var f:Function = _rf != null ? _rf : on_error;
 			_e.stack_push(class_name());
 			if (f != null) {
-				f(_e);
-			} else {
-				CONFIG::LLOG {
-					log('on_error NULL', 0x990000);
-					log('err=' + _e, 0x990000);
-				}
-			}
+				try { f(_e); }
+				catch (e:Error) { CONFIG::LLOG { log(Err.generate('ERR: on_error failed: ', e, true), 0xFF0000); } }
+			} else { CONFIG::LLOG { log('on_error null', 0x990000); } }
 			return false;
 		}
 		

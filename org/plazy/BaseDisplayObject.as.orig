@@ -181,9 +181,10 @@ package org.plazy {
 		protected function error_hr (_e:DtErr):Boolean {
 			if (on_error != null) {
 				_e.stack_push(class_name());
-				on_error(_e);
+				try { on_error(_e); }
+				catch (e:Error) { CONFIG::LLOG { log(Err.generate('ERR: on_error failed: ', e, true), 0xFF0000); } }
 			} else {
-				CONFIG::LLOG { log(Err.generate('ERR: on_error NULL', new Error(), true), 0xFF0000); }
+				CONFIG::LLOG { log(Err.generate('ERR: on_error null', new Error(), true), 0xFF0000); }
 			}
 			return false;
 		}
