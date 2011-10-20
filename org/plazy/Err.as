@@ -23,7 +23,7 @@ package org.plazy {
 			if (_err != null) {
 				l.push(String(_err));
 				if (_stack_trace) {
-					l.push('{StakTrace: ' + (_err != null ? _err.getStackTrace() : 'err_is_null') + '}');
+					l.push('{StackTrace: ' + (_err != null ? _err.getStackTrace() : 'err_is_null') + '}');
 				}
 			}
 			

@@ -85,8 +85,6 @@ package org.plazy.partners.profiles {
 			
 			cache = {};
 			
-			
-			
 			var list1:Array = _response as Array;
 			if (list1 != null) {
 				var list2:Vector.<DtProfile> = new Vector.<DtProfile>();
@@ -128,6 +126,19 @@ package org.plazy.partners.profiles {
 			//	photoMedium: String – medium size user photo URL.
 			//	photoBig: String – big size user photo URL.
 			//
+			
+			CONFIG::LLOG { log(' result dump:', 0x009999); }
+			function d1 (_pref:String, _obj:Object):void {
+				if (_obj == null) { return; }
+				for (var k:String in _obj) {
+					if (typeof(_obj[k]) == 'object') {
+						d1(_pref + k + '.', _obj[k]);
+					} else {
+						CONFIG::LLOG { log(_pref + k + '=' + _obj[k], 0x009999); }
+					}
+				}
+			}
+			d1('', _result);
 			
 			cache = {};
 			
