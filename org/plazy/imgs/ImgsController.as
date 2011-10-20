@@ -33,6 +33,12 @@ package org.plazy.imgs {
 			CONFIG::LLOG { log('kill'); }
 		}
 		
+		public function clear ():void {
+			CONFIG::LLOG { log('clear'); }
+			for each (var l:ImgsLoader in loaders) { l.kill(); }
+			loaders = {};
+		}
+		
 		public function load (_url:String, _complete_hr:Function, _progress_hr:Function):Boolean {
 			CONFIG::LLOG { log('load ' + _url); }
 			var ldr:ImgsLoader = loaders[_url];

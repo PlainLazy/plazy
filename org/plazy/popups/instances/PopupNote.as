@@ -62,6 +62,15 @@ package org.plazy.popups.instances {
 			StageController.me.add_resize_hr(pos_hr, true);
 		}
 		
+		public override function kill ():void {
+			CONFIG::LLOG { log('kill') }
+			hr = null;
+			StageController.me.rem_resize_hr(pos_hr);
+			super.kill();
+			ui_label = null;
+			ui_btn = null;
+		}
+		
 		private function click_hr ():void {
 			CONFIG::LLOG { log('click_hr') }
 			var hr_mem:Function = hr;
@@ -71,15 +80,6 @@ package org.plazy.popups.instances {
 		
 		private function pos_hr (_sw:int, _sh:int):void {
 			pos_center(_sw >> 1, _sh >> 1);
-		}
-		
-		public override function kill ():void {
-			CONFIG::LLOG { log('kill') }
-			hr = null;
-			StageController.me.rem_resize_hr(pos_hr);
-			super.kill();
-			ui_label = null;
-			ui_btn = null;
 		}
 		
 	}

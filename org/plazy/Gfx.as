@@ -33,6 +33,11 @@ package org.plazy {
 		
 		public function Gfx () { }
 		
+		public function clear ():void {
+			apps = [];
+			cache = [];
+		}
+		
 		public function add_appdom (_app:ApplicationDomain):void {
 			if (_app != null) {
 				apps.push(_app);

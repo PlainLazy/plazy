@@ -9,7 +9,6 @@
 
 package org.plazy.ui {
 	
-	import org.plazy.Err;
 	import org.plazy.BaseDisplayObject;
 	import org.plazy.dt.DtPointsData;
 	
@@ -18,28 +17,22 @@ package org.plazy.ui {
 	
 	final public class UIHitArea extends BaseDisplayObject {
 		
-		// static
+		// ext
 		
-		// const
-		
-		// base
+		private var on_click:Function;
+		private var on_over:Function;
+		private var on_out:Function;
 		
 		// vars
 		
-		private var hit_area_di:DtPointsData;
+		private var hit_area_dt:DtPointsData;
 		
 		public var x1:int;
 		public var y1:int;
 		public var x2:int;
 		public var y2:int;
 		
-		// external
-		
-		private var on_click:Function;
-		private var on_over:Function;
-		private var on_out:Function;
-		
-		// objects
+		// obs
 		
 		private var cont:BaseDisplayObject;
 		private var sen:UISen;
@@ -47,38 +40,22 @@ package org.plazy.ui {
 		// constructor
 		
 		public function UIHitArea () {
-			
-			super();
 			set_name(this);
-			
+			super();
 		}
 		
-		public function set onClick (_f:Function):void {
-			on_click = _f;
-		}
+		public function set onClick (_f:Function):void { on_click = _f; }
+		public function set onOver (_f:Function):void { on_over = _f; }
+		public function set onOut (_f:Function):void { on_out = _f; }
 		
-		public function set onOver (_f:Function):void {
-			on_over = _f;
-		}
-		
-		public function set onOut (_f:Function):void {
-			on_out = _f;
-		}
-		
-		public function init2 (_di:DtPointsData, _is_visible:Boolean):Boolean {
-			CONFIG::LLOG { log('init2') }
+		public function init2 (_dt:DtPointsData, _is_visible:Boolean):Boolean {
+			CONFIG::LLOG { log('init2'); }
+			if (!super.init()) { return false; }
+			if (hit_area_dt != null) { return error_def_hr('input NULL'); }
 			
-			if (!super.init()) {
-				return false;
-			}
+			CONFIG::LLOG { log(' ' + _dt, 0x888888) }
 			
-			if (hit_area_di != null) {
-				return error_def_hr('points is null');
-			}
-			
-			CONFIG::LLOG { log(' ' + _di, 0x888888) }
-			
-			hit_area_di = _di;
+			hit_area_dt = _dt;
 			
 			cont = new BaseDisplayObject();
 			cont.buttonMode = true;
@@ -101,21 +78,32 @@ package org.plazy.ui {
 			y2 = y1 + rect.height;
 			
 			return true;
-			
+		}
+		
+		public override function kill ():void {
+			CONFIG::LLOG { log('kill'); }
+			on_click = null;
+			on_over = null;
+			on_out = null;
+			hit_area_dt = null;
+			if (cont != null) { cont.graphics.clear(); }
+			super.kill();
+			cont = null;
+			sen = null;
 		}
 		
 		private function draw_perimeter (_is_visible:Boolean):void {
 			
-			if (hit_area_di.points == null || hit_area_di.points.length == 0) {
+			if (hit_area_dt.points == null || hit_area_dt.points.length == 0) {
 				CONFIG::LLOG { log('ERR: invalid points', 0xFF0000) }
 				return;
 			}
 			
-			if (hit_area_di.points.length > 2) {
+			if (hit_area_dt.points.length > 2) {
 				
 				var gr:Graphics = cont.graphics;
 				gr.clear();
-				gr.moveTo(hit_area_di.points[0].dx, hit_area_di.points[0].dy);
+				gr.moveTo(hit_area_dt.points[0].dx, hit_area_dt.points[0].dy);
 				
 				if (_is_visible) {
 					gr.lineStyle(0.1, 0x000088, 0.8);
@@ -126,8 +114,8 @@ package org.plazy.ui {
 				}
 				
 				var point_index:int;
-				for (point_index = 1; point_index < hit_area_di.points.length; point_index++) {
-					gr.lineTo(hit_area_di.points[point_index].dx, hit_area_di.points[point_index].dy);
+				for (point_index = 1; point_index < hit_area_dt.points.length; point_index++) {
+					gr.lineTo(hit_area_dt.points[point_index].dx, hit_area_dt.points[point_index].dy);
 				}
 				
 				gr.endFill();
@@ -137,51 +125,15 @@ package org.plazy.ui {
 		}
 		
 		private function sen_over_hr ():void {
-			
-			if (on_over != null) {
-				on_over();
-			}
-			
+			if (on_over != null) { on_over(); }
 		}
 		
 		private function sen_out_hr ():void {
-			
-			if (on_out != null) {
-				on_out();
-			}
-			
+			if (on_out != null) { on_out(); }
 		}
 		
 		private function sen_click_hr ():void {
-			
-			if (on_click != null) {
-				try {
-					on_click();
-				} catch (e:Error) {
-					error_def_hr(Err.generate('on_click failed: ', e, true));
-				}
-			}
-			
-		}
-		
-		public override function kill ():void {
-			CONFIG::LLOG { log('kill') }
-			
-			if (cont != null) {
-				cont.graphics.clear();
-			}
-			
-			super.kill();
-			
-			cont = null;
-			sen = null;
-			
-			hit_area_di = null;
-			
-			on_click = null;
-			on_over = null;
-			on_out = null;
-			
+			if (on_click != null) { on_click(); }
 		}
 		
 	}

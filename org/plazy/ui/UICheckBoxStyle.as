@@ -9,17 +9,15 @@
 
 package org.plazy.ui {
 	
-	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
+	import flash.display.BitmapData;
 	
 	public class UICheckBoxStyle {
 		
 		public var bg:BitmapData;
 		public var mark:BitmapData;
 		
-		public function UICheckBoxStyle () {
-			
-		}
+		public function UICheckBoxStyle () { }
 		
 		public function make_defaults ():void {
 			

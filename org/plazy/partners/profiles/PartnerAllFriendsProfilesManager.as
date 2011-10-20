@@ -148,7 +148,7 @@ package org.plazy.partners.profiles {
 				for each (var user1:Object in list1) {
 					var user2:DtProfile = new DtProfile();
 					user2.id = user1['id'];
-					user2.nick = user1['nick'];
+					user2.nick = user1['name'];
 					user2.photo = user1['photoMedium'];
 					list2.push(user2);
 				}

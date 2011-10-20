@@ -41,6 +41,16 @@ package org.plazy {
 			
 		}
 		
+		public function add (_obj:Object, _rewrite:Boolean):void {
+			if (_obj == null) { return; }
+			if (params == null) { params = {}; }
+			for (var k:String in _obj) {
+				if (_rewrite || params[k] == null) {
+					params[k] = String(_obj[k]);
+				}
+			}
+		}
+		
 		public function get_value (_key:String, _default_value:String = null, _no_warn:Boolean = false):String {
 			if (params[_key] != null) { return params[_key]; }
 			

@@ -26,12 +26,9 @@ package org.plazy.ui {
 		
 		private var on_change:Function;
 		
-		public function set onChange (_f:Function):void {
-			on_change = _f;
-		}
+		public function set onChange (_f:Function):void { on_change = _f; }
 		
 		public function UICheckBox (_label:String, _x:int, _y:int, _style:UICheckBoxStyle = null) {
-			
 			x = _x;
 			y = _y;
 			
@@ -58,59 +55,30 @@ package org.plazy.ui {
 			
 		}
 		
-		public function get checked ():Boolean {
-			return is_checked;
+		public function kill ():void {
+			on_change = null;
+			if (bg != null) { bg.kill(); bg = null; }
+			if (sen != null) { sen.kill(); sen = null; }
+			if (label != null) { label.kill(); label = null; }
+			if (parent != null) { parent.removeChild(this); }
 		}
 		
+		public function get checked ():Boolean { return is_checked; }
+		
 		public function set checked (_bool:Boolean):void {
-			
-			if (is_checked == _bool) {
-				return;
-			}
-			
+			if (is_checked == _bool) { return; }
 			is_checked = _bool;
-			
 			refresh();
-			
 		}
 		
 		private function switch_hr ():void {
-			
 			is_checked = !is_checked;
-			
 			refresh();
-			
-			if (on_change != null) {
-				on_change(is_checked);
-			}
-			
+			if (on_change != null) { on_change(is_checked); }
 		}
 		
 		private function refresh ():void {
-			
 			bg.bitmapData = checked ? style.mark : style.bg;
-			
-		}
-		
-		public function kill ():void {
-			
-			on_change = null;
-			
-			bg.kill();
-			bg = null;
-			
-			sen.kill();
-			sen = null;
-			
-			if (label != null) {
-				label.kill();
-				label = null;
-			}
-			
-			if (parent != null) {
-				parent.removeChild(this);
-			}
-			
 		}
 		
 	}
