@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flex-config>
+	<compiler>
+		<external-library-path>
+			<path-element>P:/programs/flex_sdk_4.1/frameworks/libs/player/10.1/playerglobal.swc</path-element>
+		</external-library-path>
+		<source-path>
+			<path-element>P:/afw2</path-element>
+		</source-path>
+	</compiler>
+	<output>P:/afw2</output>
+	<include-classes>
+		<class>org.plazy.Gfx</class>
+		<class>org.plazy.HintsController</class>
+		<class>org.plazy.StageController</class>
+		<class>org.plazy.BaseObject</class>
+		<class>org.plazy.FontsController</class>
+		<class>org.plazy.BaseDisplayObject</class>
+		<class>org.plazy.ui.UISen</class>
+		<class>org.plazy.ui.UIPic</class>
+		<class>org.plazy.ui.UILocker</class>
+		<class>org.plazy.hc.HCLighter</class>
+		<class>org.plazy.txt.UILabel</class>
+		<class>org.plazy.txt.UIInput</class>
+		<class>org.plazy.movies.MovieContainer</class>
+		<class>org.plazy.popups.PopupCon</class>
+		<class>org.plazy.popups.instances.PopupNote</class>
+		<class>org.plazy.hints.HintsContainer</class>
+		<class>org.plazy.utils.io.LoaderData</class>
+	</include-classes>
+</flex-config>
