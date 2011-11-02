@@ -9,36 +9,31 @@
 
 package org.plazy.hc {
 	
-	import org.plazy.StageController;
-	
-	import flash.events.MouseEvent;
-	import flash.display.Stage;
 	import flash.display.DisplayObject;
+	import org.plazy.StageController;
+	import ru.etcs.ui.MouseWheel;
 	
 	final public class HCMouseWheel {
 		
-		// base
+		// ext
 		
-		private var target:DisplayObject;
+		private var on_wheel:Function;
+		public function set onWheel (_f:Function):void { on_wheel = _f; }
 		
 		// vars
 		
+		private var target:DisplayObject;
 		private var x1:int;
 		private var y1:int;
 		private var x2:int;
 		private var y2:int;
 		
 		private var in_roll:Boolean;
-		
-		// external
-		
-		private var on_wheel:Function;
+		private var is_captured:Boolean;
 		
 		// constructor
 		
 		public function HCMouseWheel () { }
-		
-		public function set onWheel (_f:Function):void { on_wheel = _f; }
 		
 		public function kill ():void {
 			on_wheel = null;
@@ -61,12 +56,18 @@ package org.plazy.hc {
 			stop();
 			in_roll = true;
 			StageController.me.add_mwheel_hr(wheel_hr);
+			StageController.me.add_mmove_hr(move_hr, false);
 		}
 		
 		public function stop ():void {
 			if (in_roll) {
 				in_roll = false;
 				StageController.me.rem_mwheel_hr(wheel_hr);
+				StageController.me.rem_mmove_hr(move_hr);
+			}
+			if (is_captured) {
+				is_captured = false;
+				MouseWheel.release();
 			}
 		}
 		
@@ -76,6 +77,21 @@ package org.plazy.hc {
 			try { return on_wheel(-_d); }
 			catch (e:Error) { }
 			return false;
+		}
+		
+		private function move_hr (_x:int, _y:int):Boolean {
+			if (not_contains(target.mouseX, target.mouseY)) {
+				if (is_captured) {
+					is_captured = false;
+					MouseWheel.release();
+				}
+			} else {
+				if (!is_captured) {
+					is_captured = true;
+					MouseWheel.capture();
+				}
+			}
+			return true;
 		}
 		
 		private function not_contains (_x:int, _y:int):Boolean {
