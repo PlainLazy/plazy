@@ -106,7 +106,7 @@ package org.plazy.partners.vkontakte {
 //		}
 		
 		public function votes (_votes:uint):String {
-			return Nums.tt_val(_votes, null, 'голос', 'голоса', 'голосов');
+			return String(_votes) + ' ' + Nums.tt_val(_votes, 'голос', 'голоса', 'голосов');
 		}
 		
 		public function reset ():void {

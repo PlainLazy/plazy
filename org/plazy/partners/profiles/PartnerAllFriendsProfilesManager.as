@@ -16,13 +16,21 @@ package org.plazy.partners.profiles {
 	
 	public class PartnerAllFriendsProfilesManager extends BaseObject {
 		
+		// singleton
+		
+		public static const me:PartnerAllFriendsProfilesManager = new PartnerAllFriendsProfilesManager();
+		
+		// const
+		
 		public static const MD_VK:int = 1;
 		public static const MD_IJ:int = 2;
+		
+		// events
 		
 		public static const EV_COMPLETE:String = 'complete';
 		public const ev:Evs = new Evs();
 		
-		public static const me:PartnerAllFriendsProfilesManager = new PartnerAllFriendsProfilesManager();
+		// vars
 		
 		public var mode:int;
 		private var cache:Object;  // key: id(String), value: DtProfile
@@ -51,7 +59,8 @@ package org.plazy.partners.profiles {
 			}
 			cache = null;
 			in_progress = false;
-			return mode == 0 ? true : load();
+			//return mode == 0 ? true : load();
+			return true;
 		}
 		
 		public function load ():Boolean {
@@ -60,7 +69,7 @@ package org.plazy.partners.profiles {
 			in_progress = true;
 			if (mode == MD_VK) {
 				var p:Vector.<String> = new Vector.<String>();
-				p.push('fields=uid,first_name,last_name,nickname,sex,photo,photo_medium,photo_big');
+				p.push('fields=uid,first_name,last_name,nickname,photo_medium');
 				p.push('name_case=nom');
 				return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_GET_FRIENDS_2, p, vk_err_hr, vk_complete_hr, false);
 			} else if (mode == MD_IJ) {
@@ -71,6 +80,11 @@ package org.plazy.partners.profiles {
 		
 		private function vk_err_hr (_code:int, _msg:String):Boolean {
 			CONFIG::LLOG { log('vk_err_hr ' + _code + ' ' + _msg, 0xFF0000); }
+			if (_code == 7) {
+				CONFIG::LLOG { log('no access for friends', 0x990000); }
+				cache = {};
+				return ev.call(EV_COMPLETE);
+			}
 			return error_def_hr('METHOD_GET_FRIENDS_2 failed: code=' + _code + ' msg="' + _msg + '"');
 		}
 		
@@ -127,18 +141,20 @@ package org.plazy.partners.profiles {
 			//	photoBig: String – big size user photo URL.
 			//
 			
-			CONFIG::LLOG { log(' result dump:', 0x009999); }
-			function d1 (_pref:String, _obj:Object):void {
-				if (_obj == null) { return; }
-				for (var k:String in _obj) {
-					if (typeof(_obj[k]) == 'object') {
-						d1(_pref + k + '.', _obj[k]);
-					} else {
-						CONFIG::LLOG { log(_pref + k + '=' + _obj[k], 0x009999); }
+			CONFIG::LLOG {
+				log(' result dump:', 0x009999);
+				function d1 (_pref:String, _obj:Object):void {
+					if (_obj == null) { return; }
+					for (var k:String in _obj) {
+						if (typeof(_obj[k]) == 'object') {
+							d1(_pref + k + '.', _obj[k]);
+						} else {
+							log(_pref + k + '=' + _obj[k], 0x009999);
+						}
 					}
 				}
+				d1('', _result);
 			}
-			d1('', _result);
 			
 			cache = {};
 			

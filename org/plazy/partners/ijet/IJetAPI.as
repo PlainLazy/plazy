@@ -9,10 +9,9 @@
 
 package org.plazy.partners.ijet {
 	
-	import org.plazy.Locker;
-	import org.plazy.BaseObject;
-	
 	import flash.external.ExternalInterface;
+	import org.plazy.BaseObject;
+	import org.plazy.Locker;
 	
 	final public class IJetAPI extends BaseObject {
 		
