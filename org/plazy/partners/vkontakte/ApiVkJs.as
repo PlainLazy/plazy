@@ -9,13 +9,11 @@
 
 package org.plazy.partners.vkontakte {
 	
-	import org.plazy.Omni;
+	import com.adobe.serialization.json.JSON;
+	import flash.external.ExternalInterface;
 	import org.plazy.BaseObject;
 	import org.plazy.hc.HCTiker;
-	
-	import com.adobe.serialization.json.JSON;
-	
-	import flash.external.ExternalInterface;
+	import org.plazy.Omni;
 	
 	final public class ApiVkJs extends BaseObject {
 		
@@ -23,7 +21,7 @@ package org.plazy.partners.vkontakte {
 		
 		public static const me:ApiVkJs = new ApiVkJs();
 		
-		// external
+		// ext
 		
 		private var on_focus:Function;
 		private var on_unfocus:Function;

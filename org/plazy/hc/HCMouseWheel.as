@@ -29,6 +29,7 @@ package org.plazy.hc {
 		private var y2:int;
 		
 		private var in_roll:Boolean;
+		private var is_capture_enabled:Boolean;
 		private var is_captured:Boolean;
 		
 		// constructor
@@ -50,6 +51,16 @@ package org.plazy.hc {
 		
 		public function set_target (_target:DisplayObject):void {
 			target = _target;
+		}
+		
+		public function set_capture (_bool:Boolean):void {
+			if (is_capture_enabled != _bool) {
+				is_capture_enabled = _bool;
+				if (!is_capture_enabled && is_captured) {
+					is_captured = false;
+					MouseWheel.release();
+				}
+			}
 		}
 		
 		public function start ():void {
@@ -86,7 +97,7 @@ package org.plazy.hc {
 					MouseWheel.release();
 				}
 			} else {
-				if (!is_captured) {
+				if (is_capture_enabled && !is_captured) {
 					is_captured = true;
 					MouseWheel.capture();
 				}
