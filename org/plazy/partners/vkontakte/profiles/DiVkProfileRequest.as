@@ -16,8 +16,10 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		public function DiVkProfileRequest () { }
 		
-		public function toString ():String {
-			return '{DiVkProfileRequest: uids_list=[' + uids_list + '] on_done=' + on_done + '}';
+		CONFIG::LLOG {
+			public function toString ():String {
+				return '{DiVkProfileRequest: uids_list=[' + uids_list + '] on_done=' + on_done + '}';
+			}
 		}
 		
 	}

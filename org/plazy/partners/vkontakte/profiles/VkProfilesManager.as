@@ -9,9 +9,9 @@
 
 package org.plazy.partners.vkontakte.profiles {
 	
-	import org.plazy.Err;
-	import org.plazy.Logger;
+	import flash.utils.Dictionary;
 	import org.plazy.BaseObject;
+	import org.plazy.Err;
 	import org.plazy.partners.vkontakte.ApiVkontakte;
 	import org.plazy.partners.vkontakte.profiles.DiVkProfileRequest;
 	
@@ -21,9 +21,9 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		private const MAX_PROFILES_PER_REQUEST:int = 300;  // TODO: set 1000, 10 - its for test ;)
 		
-		private var cache:Object;  // key: uid(uint), value: DiVkProfileData
-		private var uids_for_load:Vector.<uint>;
-		private var requests_queue:Vector.<DiVkProfileRequest>;
+		private var cache:Dictionary = new Dictionary();  // key: uid(uint), value: DiVkProfileData
+		private var uids_for_load:Vector.<uint> = new Vector.<uint>();
+		private var requests_queue:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
 		
 		public function VkProfilesManager () {
 			super();
@@ -31,27 +31,13 @@ package org.plazy.partners.vkontakte.profiles {
 			reset(true);
 		}
 		
-		public function get_by_uid (_uid:uint):DiVkProfileData {
-			if (cache == null) { return null; }
-			return cache[_uid];
-		}
+		public function get_by_uid (_uid:uint):DiVkProfileData { return cache[_uid]; }
 		
 		public function reset (_clean_up:Boolean):Boolean {
 			CONFIG::LLOG { log('reset ' + _clean_up); }
-			
-			if (_clean_up) { cache = {}; }
-			
-			uids_for_load = new Vector.<uint>();
-			
-			if (requests_queue != null) {
-				var req:DiVkProfileRequest;
-				for each (req in requests_queue) {
-					req.on_done = null;
-				}
-			}
-			
-			requests_queue = new Vector.<DiVkProfileRequest>();
-			
+			if (_clean_up) { for (var uid:* in cache) { delete cache[uid]; } }  // clear
+			uids_for_load.splice(0, uids_for_load.length);  // clear
+			while (requests_queue.length > 0) { requests_queue.shift().on_done = null; }  // clear and unlink
 			return true;
 		}
 		
@@ -60,13 +46,13 @@ package org.plazy.partners.vkontakte.profiles {
 			if (_req == null || _req.uids_list == null || _req.uids_list.length == 0 || _req.on_done == null) { return error_def_hr('invalid request'); }
 			
 			var put_to_queue:Boolean;
-			
-			var uid:uint;
-			for each (uid in _req.uids_list) {
-				if (cache[uid] != null) { continue; } // already in cache
-				put_to_queue = true;
-				if (uids_for_load.indexOf(uid) != -1) { continue; } // aready in load quoue
-				uids_for_load.push(uid);
+			for each (var uid:uint in _req.uids_list) {
+				if (cache[uid] == null) {
+					put_to_queue = true;
+					if (uids_for_load.indexOf(uid) == -1) {
+						uids_for_load.push(uid);
+					}
+				}
 			}
 			
 			if (put_to_queue) {
@@ -74,23 +60,17 @@ package org.plazy.partners.vkontakte.profiles {
 				return check_queue();
 			}
 			
-			try { if (!_req.on_done()) { return false; } }
-			catch (e:Error) { return error_def_hr(Err.generate('req.on_done failed: ', e, true)); }
-			return true;
+			return _req.on_done();
 		}
 		
 		public function cancel (_req:DiVkProfileRequest):Boolean {
 			CONFIG::LLOG { log('cancel ' + _req); }
-			
-			var req:DiVkProfileRequest;
-			var index:uint;
-			for (index = 0; index < requests_queue.length; index++) {
-				if (requests_queue[index] == _req) {
-					requests_queue.splice(index, 1);
+			for (var i:uint = 0; i < requests_queue.length; i++) {
+				if (requests_queue[i] == _req) {
+					requests_queue.splice(i, 1);
 					return true;
 				}
 			}
-			
 			return true;
 		}
 		
@@ -120,7 +100,7 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		private function api_complete_hr (_response:Object):Boolean {
 			CONFIG::LLOG { log('api_complete_hr'); }
-			if (_response == null) { return error_def_hr('response null'); }
+			if (_response == null) { return error_def_hr('response NULL'); }
 			
 			//	{
 			//		"response": [
@@ -170,27 +150,19 @@ package org.plazy.partners.vkontakte.profiles {
 			
 			// dispatch ready requests
 			
-			var req_di:DiVkProfileRequest;
-			var req_uid:uint;
-			var req_ready:Boolean;
-			var index:uint;
-			for (index = 0; index < requests_queue.length; index++) {
-				req_di = requests_queue[index];
-				req_ready = true;
-				for each (req_uid in req_di.uids_list) {
+			for (var i:uint = 0; i < requests_queue.length; i++) {
+				var req_di:DiVkProfileRequest = requests_queue[i];
+				var req_ready:Boolean = true;
+				for each (var req_uid:uint in req_di.uids_list) {
 					if (cache[req_uid] == null) {
 						req_ready = false;
 						break;
 					}
 				}
 				if (req_ready) {
-					requests_queue.splice(index, 1);
-					index--;
-					try {
-						if (!req_di.on_done()) { return false; }
-					} catch (e:Error) {
-						return error_def_hr(Err.generate('ready req on_done failed: ', e ,true));
-					}
+					requests_queue.splice(i, 1);
+					i--;
+					if (!req_di.on_done()) { return false; }
 				}
 			}
 			
