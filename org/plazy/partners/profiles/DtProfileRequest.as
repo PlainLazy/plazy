@@ -16,8 +16,10 @@ package org.plazy.partners.profiles {
 		
 		public function DtProfileRequest () { }
 		
-		public function toString ():String {
-			return '{DtProfileRequest: ids=' + ids + ' hr=' + hr + '}';
+		CONFIG::LLOG {
+			public function toString ():String {
+				return '{DtProfileRequest: ids=' + ids + ' hr=' + hr + '}';
+			}
 		}
 		
 	}

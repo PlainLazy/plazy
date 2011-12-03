@@ -24,6 +24,7 @@ package org.plazy.partners.vkontakte.profiles {
 		private var cache:Dictionary = new Dictionary();  // key: uid(uint), value: DiVkProfileData
 		private var uids_for_load:Vector.<uint> = new Vector.<uint>();
 		private var requests_queue:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
+		private var busy:Boolean;
 		
 		public function VkProfilesManager () {
 			super();
@@ -43,30 +44,37 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		public function load (_req:DiVkProfileRequest):Boolean {
 			CONFIG::LLOG { log('load ' + _req); }
-			if (_req == null || _req.uids_list == null || _req.uids_list.length == 0 || _req.on_done == null) { return error_def_hr('invalid request'); }
+			if (_req == null) { return true; }
 			
-			var put_to_queue:Boolean;
-			for each (var uid:uint in _req.uids_list) {
-				if (cache[uid] == null) {
-					put_to_queue = true;
-					if (uids_for_load.indexOf(uid) == -1) {
-						uids_for_load.push(uid);
+			var have_new_uids:Boolean;
+			if (_req.uids_list != null) {
+				for each (var uid:uint in _req.uids_list) {
+					if (uid > 0) {
+						if (cache[uid] == null) {
+							have_new_uids = true;
+							if (uids_for_load.indexOf(uid) == -1) {
+								uids_for_load.push(uid);
+							}
+						}
+					} else {
+						CONFIG::LLOG { log('warn: uid must be > 0', 0x990000); }
 					}
 				}
 			}
 			
-			if (put_to_queue) {
+			if (have_new_uids) {
 				requests_queue.push(_req);
 				return check_queue();
 			}
 			
-			return _req.on_done();
+			return _req.on_done != null ? _req.on_done() : true;
 		}
 		
 		public function cancel (_req:DiVkProfileRequest):Boolean {
 			CONFIG::LLOG { log('cancel ' + _req); }
 			for (var i:uint = 0; i < requests_queue.length; i++) {
 				if (requests_queue[i] == _req) {
+					requests_queue[i].on_done = null;
 					requests_queue.splice(i, 1);
 					return true;
 				}
@@ -77,6 +85,11 @@ package org.plazy.partners.vkontakte.profiles {
 		private function check_queue ():Boolean {
 			CONFIG::LLOG { log('check_queue'); }
 			
+			if (busy) {
+				CONFIG::LLOG { log(' busy', 0x888888); }
+				return true;
+			}
+			
 			if (uids_for_load == null || uids_for_load.length == 0) {
 				CONFIG::LLOG { log(' nothing to load', 0x888888); }
 				return true;
@@ -84,6 +97,8 @@ package org.plazy.partners.vkontakte.profiles {
 			
 			var uids:Vector.<uint> = uids_for_load.splice(0, MAX_PROFILES_PER_REQUEST);
 			CONFIG::LLOG { log(' uids=[' + uids + ']', 0x888888); }
+			
+			busy = true;
 			
 			var params:Vector.<String> = new Vector.<String>();
 			params.push('uids=' + uids.join(','));
@@ -95,12 +110,13 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		private function api_err_hr (_code:int, _msg:String):Boolean {
 			CONFIG::LLOG { log('api_err_hr ' + _code + ' ' + _msg, 0xFF0000); }
+			busy = false;
 			return check_queue();
 		}
 		
 		private function api_complete_hr (_response:Object):Boolean {
 			CONFIG::LLOG { log('api_complete_hr'); }
-			if (_response == null) { return error_def_hr('response NULL'); }
+			busy = false;
 			
 			//	{
 			//		"response": [
@@ -150,6 +166,7 @@ package org.plazy.partners.vkontakte.profiles {
 			
 			// dispatch ready requests
 			
+			var ready_reqs:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
 			for (var i:uint = 0; i < requests_queue.length; i++) {
 				var req_di:DiVkProfileRequest = requests_queue[i];
 				var req_ready:Boolean = true;
@@ -162,7 +179,15 @@ package org.plazy.partners.vkontakte.profiles {
 				if (req_ready) {
 					requests_queue.splice(i, 1);
 					i--;
-					if (!req_di.on_done()) { return false; }
+					ready_reqs.push(req_di);
+				}
+			}
+			for each (var rr:DiVkProfileRequest in ready_reqs) {
+				if (rr.on_done != null) {
+					CONFIG::LLOG { log(' dispatch ready to ' + rr, 0x888888); }
+					var f:Function = rr.on_done;
+					rr.on_done = null;
+					if (!f()) { return false; }
 				}
 			}
 			
