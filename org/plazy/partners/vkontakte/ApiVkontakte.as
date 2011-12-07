@@ -37,6 +37,7 @@ package org.plazy.partners.vkontakte {
 		
 		public static const METHOD_GET_FRIENDS_2:String                    = 'friends.get';          // new
 		public static const METHOD_GET_APP_FRIENDS_2:String                = 'friends.getAppUsers';  // new
+		public static const METHOD_GET_FRIENDS_ONLINE:String               = 'friends.getOnline';    // new
 		
 		public static const METHOD_GET_USER_SETTINGS:String                = 'getUserSettings';
 		public static const METHOD_GET_USER_BALANCE:String                 = 'getUserBalance';
