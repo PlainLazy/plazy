@@ -9,12 +9,11 @@
 
 package org.plazy.ui {
 	
-	import org.plazy.BaseDisplayObject;
-	
-	import flash.events.MouseEvent;
-	import flash.display.Stage;
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
+	import flash.display.Stage;
+	import flash.events.MouseEvent;
+	import org.plazy.BaseDisplayObject;
 	
 	public class UISen extends BaseDisplayObject {
 		
@@ -38,6 +37,7 @@ package org.plazy.ui {
 		private var hash:Object = {};
 		private var events:Object = {};
 		private var current_target:DisplayObject;
+		private var dbl_click_interval:int = 250;
 		
 		// constructor
 		
@@ -86,6 +86,10 @@ package org.plazy.ui {
 				var sen:InteractiveObject = current_target as InteractiveObject;
 				sen.mouseEnabled = _bool;
 			} catch (e:Error) { }
+		}
+		
+		public function set_dbl_interval (_ms:int):void {
+			dbl_click_interval = Math.max(100, _ms);
 		}
 		
 		public function set_size (_w:int, _h:int):void {
@@ -152,7 +156,7 @@ package org.plazy.ui {
 			if (target == null) { return; }
 			
 			if (event == DBL_CLICK_EVENT) {
-				events[_type] = new EventManagerDouble(target, event, _handler);
+				events[_type] = new EventManagerDouble(target, event, _handler, dbl_click_interval);
 			} else {
 				events[_type] = new EventManagerStandart(target, event, _handler);
 			}
@@ -190,8 +194,8 @@ package org.plazy.ui {
 }
 
 import flash.display.DisplayObject;
-
 import flash.events.MouseEvent;
+import org.plazy.StageController;
 
 class EventManager {
 	
@@ -232,20 +236,21 @@ class EventManagerStandart extends EventManager {
 
 class EventManagerDouble extends EventManager {
 	
-	private const INTERVAL:int = 250;
-	
+	private var interval:int;
 	private var last_click:Number = 0;
 	
-	public function EventManagerDouble (_target:DisplayObject, _event:String, _handler:Function) {
+	public function EventManagerDouble (_target:DisplayObject, _event:String, _handler:Function, _interval:int) {
 		super(_target, _event, _handler);
+		interval = _interval;
 		target.addEventListener(MouseEvent.CLICK, click_hr);
+		StageController.me.add_mup_hr(mup_hr);
 	}
 	
 	public function click_hr (e:MouseEvent):void {
 		
 		var now:Number = get_now();
 		
-		if (now - last_click < INTERVAL) {
+		if (now - last_click < interval) {
 			// double click applyed
 			last_click = 0;
 			event_hr(e);
@@ -260,8 +265,16 @@ class EventManagerDouble extends EventManager {
 		return d.getTime();
 	}
 	
+	private function mup_hr ():Boolean {
+		if (!target.getRect(null).contains(target.mouseX, target.mouseY)) {
+			last_click = 0;
+		}
+		return true;
+	}
+	
 	public override function kill ():void {
 		target.removeEventListener(MouseEvent.CLICK, click_hr);
+		StageController.me.rem_mup_hr(mup_hr);
 		super.kill();
 	}
 	
