@@ -9,13 +9,11 @@
 
 package org.plazy.dialogs.instaces {
 	
+	import org.plazy.dialogs.DialogCon;
 	import org.plazy.StageController;
-	import org.plazy.BaseDisplayObject;
-	import org.plazy.ui.UIButton;
-	import org.plazy.ui.UISen;
 	import org.plazy.txt.UILabel;
 	import org.plazy.txt.UITxt;
-	import org.plazy.dialogs.DialogCon;
+	import org.plazy.ui.UIButton;
 	
 	final public class DialogNote extends DialogBase {
 		
@@ -27,7 +25,7 @@ package org.plazy.dialogs.instaces {
 		
 		private var hr:Function;
 		
-		// objects
+		// views
 		
 		private var ui_label:UILabel;
 		private var ui_btn:UIButton;
