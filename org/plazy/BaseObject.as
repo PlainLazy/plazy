@@ -9,9 +9,8 @@
 
 package org.plazy {
 	
-	import org.plazy.dt.DtErr;
-	
 	import flash.utils.getQualifiedClassName;
+	import org.plazy.dt.DtErr;
 	
 	CONFIG::LLOG { import org.plazy.Logger; }
 	
@@ -21,21 +20,26 @@ package org.plazy {
 		
 		private static var id:uint;
 		
-		// base
+		// ext
+		
+		protected var on_error:Function;
+		
+		// vars
 		
 		private var zid:String;
 		private var pref:String;
 		private var clname:String;
-		
-		// external
-		
-		protected var on_error:Function;
 		
 		// constructor
 		
 		public function BaseObject () {
 			zid = generate_zid();
 			CONFIG::LLOG { log('new'); }
+		}
+		
+		public function kill ():void {
+			CONFIG::LLOG { log('kill'); }
+			on_error = null;
 		}
 		
 		public function set onError (_f:Function):void { on_error = _f; }
@@ -91,11 +95,6 @@ package org.plazy {
 			protected function log (_t:String, _c:uint = 0x000000):void {
 				Logger.me.add(zid + ' ' +pref + ' ' + _t, _c);
 			}
-		}
-		
-		public function kill ():void {
-			CONFIG::LLOG { log('kill'); }
-			on_error = null;
 		}
 		
 	}

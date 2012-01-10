@@ -9,13 +9,11 @@
 
 package org.plazy {
 	
-	import org.plazy.Err;
-	import org.plazy.dt.DtErr;
-	
+	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.utils.getQualifiedClassName;
-	import flash.display.Sprite;
-	import flash.display.DisplayObject;
+	import org.plazy.dt.DtErr;
+	import org.plazy.Err;
 	
 	CONFIG::LLOG { import org.plazy.Logger; }
 	
@@ -25,7 +23,11 @@ package org.plazy {
 		
 		private static var id:uint;
 		
-		// base
+		// ext
+		
+		private var on_error:Function;
+		
+		// vars
 		
 		private var zid:String;
 		private var pref:String;
@@ -35,10 +37,6 @@ package org.plazy {
 		
 		protected var killed:Boolean;
 		protected var inited:Boolean;
-		
-		// external
-		
-		private var on_error:Function;
 		
 		// constructor
 		
