@@ -44,7 +44,7 @@ package org.plazy.partners.vkontakte {
 		
 		public function start ():Boolean {
 			CONFIG::LLOG { log('start'); }
-			if (started) { return false; }
+			if (started) { return true; }
 			if (!ExternalInterface.available) { return error_def_hr('ExternalInterface not available'); }
 			started = true;
 			ready_tiker_set();
