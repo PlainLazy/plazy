@@ -24,6 +24,7 @@ package org.plazy.partners.vkontakte.profiles {
 		private var cache:Dictionary = new Dictionary();  // key: uid(uint), value: DiVkProfileData
 		private var uids_for_load:Vector.<uint> = new Vector.<uint>();
 		private var requests_queue:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
+		private var requests_active:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
 		private var busy:Boolean;
 		
 		public function VkProfilesManager () {
@@ -79,6 +80,13 @@ package org.plazy.partners.vkontakte.profiles {
 					return true;
 				}
 			}
+			for (var k:uint = 0; k < requests_active.length; k++) {
+				if (requests_active[k] == _req) {
+					requests_active[k].on_done = null;
+					requests_active.splice(k, 1);
+					return true;
+				}
+			}
 			return true;
 		}
 		
@@ -94,6 +102,9 @@ package org.plazy.partners.vkontakte.profiles {
 				CONFIG::LLOG { log(' nothing to load', 0x888888); }
 				return true;
 			}
+			
+			// move all request from queue to active
+			while (requests_queue.length > 0) { requests_active.push(requests_queue.shift()); }
 			
 			var uids:Vector.<uint> = uids_for_load.splice(0, MAX_PROFILES_PER_REQUEST);
 			CONFIG::LLOG { log(' uids=[' + uids + ']', 0x888888); }
@@ -166,23 +177,8 @@ package org.plazy.partners.vkontakte.profiles {
 			
 			// dispatch ready requests
 			
-			var ready_reqs:Vector.<DiVkProfileRequest> = new Vector.<DiVkProfileRequest>();
-			for (var i:uint = 0; i < requests_queue.length; i++) {
-				var req_di:DiVkProfileRequest = requests_queue[i];
-				var req_ready:Boolean = true;
-				for each (var req_uid:uint in req_di.uids_list) {
-					if (cache[req_uid] == null) {
-						req_ready = false;
-						break;
-					}
-				}
-				if (req_ready) {
-					requests_queue.splice(i, 1);
-					i--;
-					ready_reqs.push(req_di);
-				}
-			}
-			for each (var rr:DiVkProfileRequest in ready_reqs) {
+			while (requests_active.length > 0) {
+				var rr:DiVkProfileRequest = requests_active.shift();
 				if (rr.on_done != null) {
 					CONFIG::LLOG { log(' dispatch ready to ' + rr, 0x888888); }
 					var f:Function = rr.on_done;
