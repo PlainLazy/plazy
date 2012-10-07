@@ -10,7 +10,6 @@
 package org.plazy.hc {
 	
 	import org.plazy.BaseObject;
-	
 	import flash.net.SharedObject;
 	
 	public class HCLocalSO extends BaseObject {

@@ -33,7 +33,7 @@ package org.plazy.dialogs.instaces {
 		}
 		
 		public function closed ():Boolean {
-			if (on_dialog_closed == null) { return error_def_hr('on_dialog_closed null'); }
+			if (on_dialog_closed == null) { return error_def_hr('on_dialog_closed NULL'); }
 			
 			try {
 				if (!on_dialog_closed()) { return false; }

@@ -9,9 +9,8 @@
 
 package org.plazy.hc {
 	
-	import org.plazy.StageController;
-	
 	import flash.events.Event;
+	import org.plazy.StageController;
 	
 	//final public class HCFramer implements IHCFramer {
 	final public class HCFramer {

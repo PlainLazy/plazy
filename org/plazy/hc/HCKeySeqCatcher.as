@@ -9,10 +9,9 @@
 
 package org.plazy.hc {
 	
+	import flash.events.KeyboardEvent;
 	import org.plazy.StageController;
 	
-	import flash.events.KeyboardEvent;
-
 	CONFIG::LLOG { import org.plazy.Logger; }
 	
 	final public class HCKeySeqCatcher {
