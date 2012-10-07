@@ -115,52 +115,47 @@ package org.plazy.dialogs {
 			
 			var founded:Boolean;
 			
-			if (current != null) {
+			if (current != null && current == _dialog) {
+				CONFIG::LLOG { log(' is current', 0x888888); }
 				
-				if (current == _dialog) {
-					
-					founded = true;
-					
-					var cd1:DialogBase = current;
-					
-					Locker.me.active = false;
-					current = null;
-					
-					if (!cd1.closed()) {
-						cd1.kill();
-						cd1 = null;
-						return false;
-					}
-					
+				founded = true;
+				
+				var cd1:DialogBase = current;
+				
+				Locker.me.active = false;
+				current = null;
+				
+				if (!cd1.closed()) {
 					cd1.kill();
 					cd1 = null;
-					
+					return false;
 				}
 				
-			} else {
+				cd1.kill();
+				cd1 = null;
 				
-				if (queue != null && queue.length > 0) {
-					
-					var i:int;
-					var d:DialogBase;
-					
-					for (i = 0; i < queue.length; i++) {
-						if (queue[i] == _dialog) {
-							
-							queue.splice(i, 1);
-							founded = true;
-							
-							if (!_dialog.closed()) {
-								_dialog.kill();
-								return false;
-							}
-							
+			}
+				
+			if (!founded && queue != null && queue.length > 0) {
+				
+				var i:int;
+				var d:DialogBase;
+				
+				for (i = 0; i < queue.length; i++) {
+					if (queue[i] == _dialog) {
+						
+						queue.splice(i, 1);
+						founded = true;
+						
+						if (!_dialog.closed()) {
 							_dialog.kill();
-							
-							break;
+							return false;
 						}
+						
+						_dialog.kill();
+						
+						break;
 					}
-					
 				}
 				
 			}

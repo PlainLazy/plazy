@@ -36,6 +36,8 @@ package org.plazy.partners.vkontakte {
 		
 		// vars
 		
+		public var append_uri:String;
+		
 		private var started:Boolean;
 		private var lock1:Boolean;
 		private var bd:BitmapData;
@@ -63,10 +65,11 @@ package org.plazy.partners.vkontakte {
 			CONFIG::LLOG { log('kill'); }
 			on_failed = null;
 			on_complete = null;
-			Omni.me.rem('VkWallPostSave', wall_saved_hr);
-			Omni.me.rem('VkWallPostCancel', wall_cancelled_hr);
+			//Omni.me.rem('VkWallPostSave', wall_saved_hr);
+			//Omni.me.rem('VkWallPostCancel', wall_cancelled_hr);
+			Omni.me.rem('VkWallPostResponse', wall_post_response_hr);
 			ApiVkontakte.me.request_cancel(get_server_complete_hr);
-			ApiVkontakte.me.request_cancel(save_post_complete_hr);
+			//ApiVkontakte.me.request_cancel(save_post_complete_hr);
 			unlock();
 			if (ldr != null) { ldr.kill(); ldr = null; }
 			super.kill();
@@ -103,7 +106,11 @@ package org.plazy.partners.vkontakte {
 			
 			if (_lock) { lock1 = true; Locker.me.active = true; }
 			if (_use_cached_server_url && last_server_url != null) { return image_send(last_server_url); }
-			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER, new Vector.<String>(), get_server_err_hr, get_server_complete_hr, false);
+			
+			//return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER, new Vector.<String>(), get_server_err_hr, get_server_complete_hr, false);
+			var p:Vector.<String> = new Vector.<String>();
+			p.push('uid=' + _wall_id);
+			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_PHOTOS_GET_WALL_UPLOAD_SERVER, p, get_server_err_hr, get_server_complete_hr, false);
 		}
 		
 		private function unlock ():void {
@@ -116,7 +123,8 @@ package org.plazy.partners.vkontakte {
 		
 		private function get_server_err_hr (_code:int, _msg:String):Boolean {
 			CONFIG::LLOG { log('get_server_err_hr code=' + _code + ' msg=' + _msg, 0xFF0000) }
-			return error_def_hr('api "' + ApiVkontakte.METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER + '" failed: ' + _code + ', ' + _msg);
+			//return error_def_hr('api "' + ApiVkontakte.METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER + '" failed: ' + _code + ', ' + _msg);
+			return error_def_hr('api "' + ApiVkontakte.METHOD_PHOTOS_GET_WALL_UPLOAD_SERVER + '" failed: ' + _code + ', ' + _msg);
 		}
 		
 		private function get_server_complete_hr (_resp:Object):Boolean {
@@ -126,7 +134,7 @@ package org.plazy.partners.vkontakte {
 			//	{"response":{"upload_url":"http:\/\/cs9231.vkontakte.ru\/upload.php?act=profile&mid=6492&hash=284b5d004f5524e8b781cc9ddfb75de1&rhash=5133711120e3156dbb8f4cb2069fb29f&swfupload=1"}}
 			
 			last_server_url = _resp['upload_url'];
-			if (last_server_url == null) { return error_def_hr('upload_url null'); }
+			if (last_server_url == null) { return error_def_hr('upload_url NULL'); }
 			return image_send(last_server_url);
 		}
 		
@@ -177,26 +185,43 @@ package org.plazy.partners.vkontakte {
 			try { obj = JSON.decode(data); }
 			catch (e:Error) { return error_ext_hr('JSON.decode failed', e); }
 			
+			CONFIG::LLOG {
+				for (var k:String in obj) {
+					log(' obj[' + k + ']=' + obj[k], 0x888888);
+				}
+			}
+			
 			var params:Vector.<String> = new Vector.<String>();
-			params.push('wall_id=' + wall_id);
+			//params.push('wall_id=' + wall_id);
 			params.push('server=' + obj['server']);
 			params.push('photo=' + obj['photo']);
 			params.push('hash=' + obj['hash']);
 			
-			if (post_id != null) { params.push('post_id=' + post_id); }
-			if (message != null) { params.push('message=' + message); }
+			//if (post_id != null) { params.push('post_id=' + post_id); }
+			//if (message != null) { params.push('message=' + message); }
 			
-			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_WALL_SAVE_POST, params, save_post_err_hr, save_post_complete_hr, false);
+			//return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_WALL_SAVE_POST, params, save_post_err_hr, save_post_complete_hr, false);
+			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_PHOTOS_SEVE_WALL_PHOTO, params, photos_save_wall_err_hr, photos_save_wall_complete_hr, false);
+			
+			/*
+			var params:Vector.<String> = new Vector.<String>();
+			params.push('owner_id=' + wall_id);
+			if (message != null) { params.push('message=' + message); }
+			params.push('attachments=http://vk.com/app' + AppState.me.conf_dt.vk_app_id);
+			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_WALL_POST, params, wall_post_err_hr, wall_post_complete_hr, false);
+			*/
 		}
 		
+		/*
 		private function save_post_err_hr (_code:int, _msg:String):Boolean {
 			CONFIG::LLOG { log('save_post_err_hr code=' + _code + ' msg=' + _msg, 0xFF0000) }
-			return error_def_hr('api "' + ApiVkontakte.METHOD_WALL_SAVE_POST + '" failed: ' + _code + ', ' + _msg);
+			//return error_def_hr('api "' + ApiVkontakte.METHOD_WALL_SAVE_POST + '" failed: ' + _code + ', ' + _msg);
+			return error_def_hr('api "' + ApiVkontakte.METHOD_PHOTOS_SEVE_WALL_PHOTO + '" failed: ' + _code + ', ' + _msg);
 		}
 		
 		private function save_post_complete_hr (_resp:Object):Boolean {
 			CONFIG::LLOG { log('save_post_complete_hr'); }
-			if (_resp == null) { return error_def_hr('resp null'); }
+			if (_resp == null) { return error_def_hr('resp NULL'); }
 			
 			//	{"response":{"post_hash":"264b5d004f5524e8c781cb9dafb75de1", "photo_src":"http:\/\/cs9231.vkontakte.ru\/u06492\/a_7b9c2b04.jpg"}}
 			
@@ -207,6 +232,44 @@ package org.plazy.partners.vkontakte {
 			
 			return ApiVkJs.me.save_wall_post(_resp['post_hash']);
 		}
+		*/
+		
+		private function photos_save_wall_err_hr (_code:int, _msg:String):Boolean {
+			CONFIG::LLOG { log('photos_save_wall_err_hr code=' + _code + ' msg=' + _msg, 0xFF0000) }
+			return error_def_hr('api "' + ApiVkontakte.METHOD_PHOTOS_SEVE_WALL_PHOTO + '" failed: ' + _code + ', ' + _msg);
+		}
+		
+		private function photos_save_wall_complete_hr (_resp:Object):Boolean {
+			CONFIG::LLOG { log('photos_save_wall_complete_hr'); }
+			if (_resp == null) { return error_def_hr('resp NULL'); }
+			
+			//	[{"id":"photo66748_217720668","pid":217720668,"aid":-7,"owner_id":66748,"src":"http://cs4753.vk.com/u66748/-7/m_7660ac8a.jpg","src_big":"http://cs4753.vk.com/u66748/-7/x_103fc229.jpg","src_small":"http://cs4753.vk.com/u66748/-7/s_06f79515.jpg","created":1297077209}]
+			
+			//Omni.me.add('VkWallPostSave', wall_saved_hr);
+			//Omni.me.add('VkWallPostCancel', wall_cancelled_hr);
+			Omni.me.add('VkWallPostResponse', wall_post_response_hr);
+			
+			var id:String = _resp[0] != null && _resp[0]['id'] != null ? _resp[0]['id'] : '{invalid_id_vkapibug}';
+			
+			//return ApiVkJs.me.wall_post(wall_id, message, _resp[0]['id'] + ',http://vk.com/app' + AppState.me.conf_dt.vk_app_id);
+			//return ApiVkJs.me.wall_post(wall_id, message, _resp[0]['id'] + ',http://vk.com/app' + ApiVkontakte.me.app_data.api_id);
+			return ApiVkJs.me.wall_post(wall_id, message, _resp[0]['id'] + (append_uri != null ? ',' + append_uri : ''));
+		}
+		
+		/*
+		private function wall_post_err_hr (_code:int, _msg:String):Boolean {
+			CONFIG::LLOG { log('wall_post_err_hr code=' + _code + ' msg=' + _msg, 0xFF0000) }
+			return error_def_hr('api "' + ApiVkontakte.METHOD_WALL_POST + '" failed: ' + _code + ', ' + _msg);
+		}
+		
+		private function wall_post_complete_hr (_resp:Object):Boolean {
+			CONFIG::LLOG { log('wall_post_complete_hr'); }
+			if (_resp == null) { return error_def_hr('resp NULL'); }
+			
+			//  {"response":{"post_id":215}}
+			
+			return true;
+		}
 		
 		private function wall_saved_hr ():Boolean {
 			CONFIG::LLOG { log('wall_saved_hr'); }
@@ -216,6 +279,13 @@ package org.plazy.partners.vkontakte {
 		private function wall_cancelled_hr ():Boolean {
 			CONFIG::LLOG { log('wall_cancelled_hr'); }
 			return complete_hr(false);
+		}
+		*/
+		
+		private function wall_post_response_hr ():Boolean {
+			CONFIG::LLOG { log('wall_post_response_hr'); }
+			// todo: get response data, check success or failed
+			return complete_hr(true);
 		}
 		
 		private function complete_hr (_posted:Boolean):Boolean {

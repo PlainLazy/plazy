@@ -24,8 +24,10 @@ package org.plazy.partners.mailru {
 		
 		public static const me:ApiMailRu = new ApiMailRu();
 		
-		public static const METHOD_USERS_GET_INFO:String        = 'users.getInfo';
-		public static const METHOD_PAYMENTS_OPEN_DIALOG:String  = 'payments.openDialog';
+		public static const METHOD_USERS_GET_INFO:String         = 'users.getInfo';
+		public static const METHOD_FRIENDS_GET_APP_USERS:String  = 'friends.getAppUsers';
+		public static const METHOD_PAYMENTS_OPEN_DIALOG:String   = 'payments.openDialog';
+		public static const METHOD_STREAM_POST:String            = 'stream.post';
 		
 		public var app_data:DiApplicationData;
 		public var user_data:DiUserData;
@@ -163,7 +165,7 @@ package org.plazy.partners.mailru {
 				params_hash[param_pair[0]] = param_pair[1];
 			}
 			
-			return ldr.load(app_data.api_url, 'GET', params_hash);
+			return ldr.load(app_data.api_uri, 'GET', params_hash);
 		}
 		
 		private function hf_params_sorter (_a:String, _b:String):int {

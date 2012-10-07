@@ -9,15 +9,17 @@
 
 package org.plazy.ui.decor {
 	
-	import org.plazy.BaseDisplayObject;
-	import org.plazy.ui.UIPic;
-	import org.plazy.hc.HCMatr;
-	
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	import flash.display.BitmapData;
+	import flash.geom.Point;
+	import org.plazy.BaseDisplayObject;
+	import org.plazy.hc.HCMatr;
+	import org.plazy.ui.UIPic;
 	
 	final public class UIDecorBitmap3Line extends BaseDisplayObject {
+		
+		// views
+		
+		private var img:UIPic;
 		
 		// constructor
 		
@@ -46,14 +48,17 @@ package org.plazy.ui.decor {
 			
 			graphics.clear();
 			
-			var img:UIPic = new UIPic(result_bd);
+			img = new UIPic(result_bd);
 			addChild(img);
 		}
 		
-//		public override function kill ():void {
-//			CONFIG::LLOG { log('kill') }
-//			super.kill();
-//		}
+		public override function kill ():void {
+			CONFIG::LLOG { log('kill') }
+			super.kill();
+			img = null;
+		}
+		
+		public function set smoothing (_bool:Boolean):void { img.smoothing = _bool; }
 		
 	}
 	

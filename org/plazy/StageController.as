@@ -12,6 +12,7 @@ package org.plazy {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.display.Stage;
+	import org.plazy.hc.HCTiker;
 	
 	final public class StageController extends BaseObject {
 		
@@ -29,6 +30,8 @@ package org.plazy {
 		private var mleave_hrs:Vector.<Function>;
 		private var lmx:int;
 		private var lmy:int;
+		private var fps_val:uint;
+		private var fps_tik:HCTiker;
 		
 		public function StageController () {
 			set_name(this);
@@ -51,6 +54,7 @@ package org.plazy {
 			stg.addEventListener(MouseEvent.MOUSE_WHEEL, mouse_wheel_hr);
 			stg.addEventListener(MouseEvent.MOUSE_UP, mouse_up_hr);
 			stg.addEventListener(Event.MOUSE_LEAVE, mouse_leave_hr);
+			stg.addEventListener(Event.ENTER_FRAME, frm_hr);
 		}
 		
 		public function unfocus ():void {
@@ -157,6 +161,27 @@ package org.plazy {
 			}
 		}
 		
+		public function fps_keep_up (_fps:uint):void {
+			fps_val = _fps;
+			fps_tik_reset();
+		}
+		
+		public function fps_keep_out ():void {
+			fps_val = 0;
+			fps_tik_rem();
+		}
+		
+		private function fps_tik_reset ():void {
+			fps_tik_rem();
+			fps_tik = new HCTiker();
+			fps_tik.set_tik(fps_tik_hr, Math.ceil(1001 / fps_val), 1);
+		}
+		
+		private function fps_tik_hr ():Boolean {
+			stg.dispatchEvent(new Event(Event.ENTER_FRAME));
+			return true;
+		}
+		
 		private function resize_apply ():void {
 			lsw = stg.stageWidth;
 			lsh = stg.stageHeight;
@@ -225,6 +250,15 @@ package org.plazy {
 					}
 				} catch (e:Error) { error_def_hr(Err.generate('mleave hr failed: ', e, true)); return; }
 			}
+		}
+		
+		private function frm_hr (_e:Event):void {
+			if (fps_val == 0) { return; }
+			fps_tik_reset();
+		}
+		
+		private function fps_tik_rem ():void {
+			if (fps_tik != null) { fps_tik.kill(); fps_tik = null; }
 		}
 		
 	}

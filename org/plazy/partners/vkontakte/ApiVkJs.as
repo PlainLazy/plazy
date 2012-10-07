@@ -30,6 +30,7 @@ package org.plazy.partners.vkontakte {
 		
 		private var started:Boolean;
 		private var ready_tiker:HCTiker;
+		private var event_index:int;
 		private var events_tiker:HCTiker;
 		
 		// constructor
@@ -93,6 +94,13 @@ package org.plazy.partners.vkontakte {
 			return true;
 		}
 		
+		public function wall_post (_owner_id:String, _message:String, _attachments:String):Boolean {
+			CONFIG::LLOG { log('wall_post ' + _owner_id + ' ' + _message + ' ' + _attachments); }
+			ExternalInterface.call('wall_post', _owner_id, _message, _attachments);
+			ready_tiker_hr();
+			return true;
+		}
+		
 		private function ready_tiker_set ():void {
 			if (ready_tiker == null) {
 				ready_tiker = new HCTiker();
@@ -108,6 +116,11 @@ package org.plazy.partners.vkontakte {
 			var is_vk_ready:String = ExternalInterface.call('is_vk_ready');
 			if (is_vk_ready == '1') {
 				reday_tiker_rem();
+				var last_index:String;
+				try { last_index = ExternalInterface.call('get_events_last_index'); }
+				catch (e:Error) { }
+				CONFIG::LLOG { log(' last_index=' + last_index, 0x888888); }
+				event_index = Math.max(0, int(last_index));
 				events_tiker_set();
 			}
 		}
@@ -125,10 +138,18 @@ package org.plazy.partners.vkontakte {
 		
 		private function events_tiker_hr ():void {
 			var ev:String;
+			/*
 			try { ev = ExternalInterface.call('shift_event'); }
 			catch (e:Error) { }
+			*/
+			try { ev = ExternalInterface.call('get_event_by_index', event_index); }
+			catch (e:Error) { }
+			
 			if (ev == null || ev == '') { return; }
 			CONFIG::LLOG { log('/// ev: ' + ev, 0x990000); }
+			
+			CONFIG::LLOG { log(' event_index+1 = ' + event_index, 0x888888); }
+			event_index++;
 			
 			var obj:Object;
 			try { obj = JSON.decode(ev); }
@@ -165,6 +186,10 @@ package org.plazy.partners.vkontakte {
 					}
 					case 'onWallPostCancel': {
 						Omni.me.call('VkWallPostCancel');
+						break;
+					}
+					case 'onWallPostResponse': {
+						Omni.me.call('VkWallPostResponse');
 						break;
 					}
 					default: {

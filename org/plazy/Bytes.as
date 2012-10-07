@@ -35,6 +35,25 @@ package org.plazy {
 			return _bytes.readUTFBytes(len);
 		}
 		
+		public static function read_bigint_bytes (_bytes:ByteArray):ByteArray {
+			if (_bytes.bytesAvailable < 8) { return null; }
+			var b:ByteArray = create_le();
+			_bytes.readBytes(b, 0, 8);
+			b.position = 0;
+			return b;
+		}
+		
+		public static function invert (_bytes:ByteArray):ByteArray {
+			if (_bytes.length > 0) {
+				var copy:ByteArray = new ByteArray();
+				copy.writeBytes(_bytes);
+				for (var i:int = 0; i < copy.length; i++) {
+					_bytes[i] = copy[copy.length - 1 - i];
+				}
+			}
+			return _bytes;
+		}
+		
 		public static function read (_pattern:String, _bytes:ByteArray):Array {
 			if (_pattern == null || _pattern == '' || _bytes == null) { return null; }
 			

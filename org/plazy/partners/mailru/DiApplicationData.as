@@ -15,7 +15,7 @@ package org.plazy.partners.mailru {
 	
 	public class DiApplicationData {
 		
-		public var api_url:String;
+		public var api_uri:String;
 		public var secret_key:String;
 		
 		public var app_id:String;
@@ -24,8 +24,9 @@ package org.plazy.partners.mailru {
 		public var oid:String;
 		public var vid:String;
 		public var is_app_user:String;
-		public var state:String;
+		//public var state:String;
 		public var window_id:String;
+		public var sig:String;
 		
 		public var height:int;
 		
@@ -33,6 +34,8 @@ package org.plazy.partners.mailru {
 		
 		public function update ():void {
 			CONFIG::LLOG { Logger.me.add('mailru:DiApplicationData update'); }
+			
+			// depricated
 			
 			/*
 				Инициализация приложения
@@ -54,9 +57,26 @@ package org.plazy.partners.mailru {
 				Ключ включает в себя параметр secret_key, поэтому злоумышленник не может его подделать - рассчитав аналогичный ключ на сервере приложения и сравнив его с authentication_key можно убедиться, что пользователь не поддельный. 
 			*/
 			
+			// actual
+			
+			/*
+				app_id	int	идентификатор вашего приложения
+				session_key	string	идентификатор сессии
+				session_expire	timestamp	время в формате unixtime когда сессия перестанет быть валидной
+				oid	uint64	идентификатор пользователя, установившего приложение
+				vid	uint64	идентификатор пользователя, запустившего приложение
+				is_app_user	bool	флаг, обозначающий установил ли приложение пользователь просматривающий приложение (1 — установил, иначе 0)
+				ext_perm	string	пользовательские настройки приложения; значением данного параметра является перечисление через запятую настроек пользователя, описанных в документации к методу users.hasAppPermissionrest; например: ext_perm=stream,notifications
+				window_id	string	идентификатор окна, в котором запущено приложение
+				view	string	определяет место, из которого открыто приложение
+				referer_type	string	определяет тип реферера (см. Бонус за друга); необязательный параметр
+				referer_id	string	определяет id реферера (см. Бонус за друга); необязательный параметр
+				sig	string	подпись параметров
+			*/
+			
 			// main
 			
-			//api_url              = GameState.me.config_di.api_mailru_url;
+			//api_uri              = GameState.me.config_di.api_mailru_url;
 			//secret_key           = GameState.me.config_di.api_mailru_secret_key;
 			
 			// flashvars
@@ -67,8 +87,8 @@ package org.plazy.partners.mailru {
 			oid                 = FlashVars.me.get_value('oid');
 			vid                 = FlashVars.me.get_value('vid');
 			is_app_user         = FlashVars.me.get_value('is_app_user');
-			state               = FlashVars.me.get_value('state');
-			window_id           = FlashVars.me.get_value('window_id');
+			//state               = FlashVars.me.get_value('state');
+			sig                 = FlashVars.me.get_value('sig');
 			
 		}
 		

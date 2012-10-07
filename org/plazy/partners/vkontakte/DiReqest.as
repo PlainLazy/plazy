@@ -26,6 +26,17 @@ package org.plazy.partners.vkontakte {
 			on_comlete = null;
 		}
 		
+		public function clone ():DiReqest {
+			var r:DiReqest = new DiReqest();
+			r.method = method;
+			r.params = params.concat();
+			r.on_error = on_error;
+			r.on_comlete = on_comlete;
+			r.lock = lock;
+			r.cancelled = cancelled;
+			return r;
+		}
+		
 		public function toString ():String {
 			return '{DiReqest: method=' + method + ' params=' + params + ' on_error=' + on_error + ' on_complete=' + on_comlete + ' lock=' + lock + ' cancelled=' + cancelled + '}';
 		}

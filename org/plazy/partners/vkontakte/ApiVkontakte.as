@@ -41,9 +41,16 @@ package org.plazy.partners.vkontakte {
 		
 		public static const METHOD_GET_USER_SETTINGS:String                = 'getUserSettings';
 		public static const METHOD_GET_USER_BALANCE:String                 = 'getUserBalance';
-		public static const METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER:String = 'wall.getPhotoUploadServer';
-		public static const METHOD_WALL_SAVE_POST:String                   = 'wall.savePost';
+		public static const METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER:String = 'wall.getPhotoUploadServer';   // depricated
+		public static const METHOD_PHOTOS_GET_WALL_UPLOAD_SERVER:String    = 'photos.getWallUploadServer';  // new
+		public static const METHOD_PHOTOS_SEVE_WALL_PHOTO:String           = 'photos.saveWallPhoto';  // new
+		public static const METHOD_WALL_SAVE_POST:String                   = 'wall.savePost';  // depricated
+		//public static const METHOD_WALL_POST:String                        = 'wall.post';      // new (ONLY by VK.api)
 		public static const METHOD_GET_ADS:String                          = 'getAds';
+		public static const METHOD_GROUPS_IS_MEMBER:String                 = 'groups.isMember';
+		
+		public static const METHOD_STORAGE_GET:String                      = 'storage.get';
+		public static const METHOD_STORAGE_SET:String                      = 'storage.set';
 		
 		//	+1	Пользователь разрешил отправлять ему уведомления.
 		//	+2	Доступ к друзьям.
@@ -261,12 +268,12 @@ package org.plazy.partners.vkontakte {
 		
 		private function ldr_complete_hr ():Boolean {
 			CONFIG::LLOG { log('ldr_complete_hr', 0x009900); }
-			if (current_request != null && current_request.lock) { Locker.me.active = false; }
 			
 			var loaded_data:String = ldr.get_data();
 			CONFIG::LLOG { log('loaded_data: ' + Logger.me.quote(loaded_data), 0x888888); }
 			
 			if (current_request == null) { return error_def_hr('unwaited ldr data'); }
+			if (current_request.lock) { Locker.me.active = false; }
 			
 			var d:Date = new Date();
 			requests_log.push(d.getTime());
@@ -275,6 +282,8 @@ package org.plazy.partners.vkontakte {
 				requests_log.shift();
 			}
 			//log(' requests_log=[' + requests_log + ']', 0x990000);
+			
+			var request_clone:DiReqest = current_request.clone();
 			
 			if (current_request.cancelled) {
 				CONFIG::LLOG { log(' cencelled', 0x888888); }
@@ -292,12 +301,26 @@ package org.plazy.partners.vkontakte {
 			var obj:Object;
 			try { obj = JSON.decode(loaded_data); }
 			catch (e:Error) { return error_def_hr('invalid api JSON format: ' + StringUtils.html_safe(String(e))); }
-			if (obj['error'] != null) {
-				if (!current_error_hr(int(obj['error']['error_code']), String(obj['error']['error_msg']))) { return true; }
+			var err:Object = obj['error'];
+			if (err != null) {
+				var err_code:int = int(err['error_code']);
+				var err_msg:String = String(err['error_msg']);
+				CONFIG::LLOG { log(' err_code=' + err_code + ' (' + err_msg + ')', 0x990000); }
+				switch (err_code) {
+					case 6: {
+						CONFIG::LLOG { log(' unhift clone request ' + request_clone, 0x888888); }
+						requests_queue.unshift(request_clone);
+						return check_queue();
+					}
+					default: {
+						if (!current_error_hr(err_code, err_msg)) { return true; }
+					}
+				}
 				return check_queue();
 			}
-			if (obj['response'] != null) {
-				if (!current_complete_hr(obj['response'])) { return false; }
+			var resp:Object = obj['response'];
+			if (resp != null) {
+				if (!current_complete_hr(resp)) { return false; }
 				return check_queue();
 			}
 			return error_def_hr('invalid response content');
