@@ -15,6 +15,7 @@ package org.plazy.dialogs.instaces {
 		
 		// external
 		
+		public var on_closing:Function;
 		protected var on_dialog_closed:Function;
 		
 		// constructor
@@ -28,11 +29,19 @@ package org.plazy.dialogs.instaces {
 		
 		public override function kill ():void {
 			CONFIG::LLOG { log('kill') }
+			on_closing = null;
 			on_dialog_closed = null;
 			super.kill();
 		}
 		
 		public function closed ():Boolean {
+			
+			if (on_closing != null) {
+				if (!on_closing()) {
+					return false;
+				}
+			}
+			
 			if (on_dialog_closed == null) { return error_def_hr('on_dialog_closed NULL'); }
 			
 			try {

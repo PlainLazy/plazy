@@ -21,6 +21,9 @@ package org.plazy.partners.mailru {
 		public var ava_600px:String;
 		public var link:String;
 		
+		public var country:String;
+		public var city:String;
+		
 		public function MMProfileData () { }
 		
 		public function is_male ():Boolean { return sex == 0; }
@@ -30,7 +33,7 @@ package org.plazy.partners.mailru {
 		
 		CONFIG::LLOG {
 			public function toString ():String {
-				return '{MMProfileData: uid=' + uid + ' fname=' + fname + ' lname=' + lname + ' nick=' + nick + ' sex=' + sex + ' ava=' + ava_45px + ',' + ava + ',' + ava_600px + ' link=' + link + '}';
+				return '{MMProfileData: uid=' + uid + ' fname=' + fname + ' lname=' + lname + ' nick=' + nick + ' sex=' + sex + ' ava=' + ava_45px + ',' + ava + ',' + ava_600px + ' link=' + link + ' country=' + country + ' city=' + city + '}';
 			}
 		}
 		

@@ -9,10 +9,9 @@
 
 package org.plazy.ui {
 	
-	import org.plazy.txt.UILabel;
-	
 	import flash.display.Stage;
 	import flash.filters.GlowFilter;
+	import org.plazy.txt.UILabel;
 	
 	final public class UIButton extends UISen {
 		
@@ -20,13 +19,14 @@ package org.plazy.ui {
 		
 		public function UIButton (_t:String, _x:int, _y:int, _w:int, _stg:Stage = null) {
 			
-			var tf:UILabel = new UILabel(_t, 5, 1, _w > 0 ? _w : -4, -4, UILabel.frm(11, 0x004400, true, 'center'), true, false);
+			var tf:UILabel = new UILabel(_t, 0, 1, _w > 0 ? _w : -4, -4, UILabel.frm(11, 0x004400, true, 'center'), true, false);
 			
 			var w2:int = _w != -1 ? _w : tf.width + 10;
 			var h2:int = tf.height + 3;
 			
 			super(_x, _y, w2, h2, _stg);
 			
+			tf.pos_center(w2 >> 1, -1);
 			addChild(tf);
 			
 		}

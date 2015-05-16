@@ -19,26 +19,18 @@ package org.plazy {
 	
 	public class BaseDisplayObject extends Sprite implements IBaseDisplayObject {
 		
-		// static
-		
 		private static var id:uint;
 		
-		// ext
-		
 		private var on_error:Function;
-		
-		// vars
 		
 		private var zid:String;
 		private var pref:String;
 		private var clname:String;
 		
-		// vars
+		public var log_enabled:Boolean = true;
 		
 		protected var killed:Boolean;
 		protected var inited:Boolean;
-		
-		// constructor
 		
 		public function BaseDisplayObject () {
 			zid = generate_zid();
@@ -188,6 +180,7 @@ package org.plazy {
 		
 		CONFIG::LLOG {
 			protected function log (_t:String, _c:uint = 0x000000):void {
+				if (!log_enabled) { return; }
 				Logger.me.add(zid + ' ' + pref + ' ' + _t, _c);
 			}
 		}

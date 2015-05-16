@@ -10,6 +10,7 @@
 package org.plazy.utils.io {
 	
 	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	import flash.net.URLVariables;
 	import flash.net.URLRequestHeader;
@@ -18,13 +19,14 @@ package org.plazy.utils.io {
 	import flash.events.ProgressEvent;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.utils.ByteArray;
 	
 	final public class LoaderData extends LoaderBase {
 		
 		// vars
 		
 		private var ldr:URLLoader;
-		private var result_string:String;
+		private var result_bin:ByteArray;
 		
 		// constructor
 		
@@ -36,7 +38,7 @@ package org.plazy.utils.io {
 		public override function kill ():void {
 			CONFIG::LLOG { log('kill') }
 			close();
-			result_string = null;
+			result_bin = null;
 			super.kill();
 		}
 		
@@ -89,8 +91,11 @@ package org.plazy.utils.io {
 		}
 		
 		public function get_data ():String {
-			return result_string;
+			if (result_bin == null) { return null; }
+			result_bin.position = 0;
+			return result_bin.readUTFBytes(result_bin.bytesAvailable);
 		}
+		public function get_bin ():ByteArray { return result_bin; }
 		
 		private function ldr_active (_bool:Boolean):void {
 			var is_ldr_active:Boolean = ldr != null;
@@ -100,6 +105,7 @@ package org.plazy.utils.io {
 			
 			if (_bool) {
 				ldr = new URLLoader();
+				ldr.dataFormat = URLLoaderDataFormat.BINARY;
 				ldr.addEventListener(Event.COMPLETE, ldr_complete_hr);
 				ldr.addEventListener(ProgressEvent.PROGRESS, ldr_progress_hr);
 				ldr.addEventListener(HTTPStatusEvent.HTTP_STATUS, ldr_http_status_hr);
@@ -123,9 +129,18 @@ package org.plazy.utils.io {
 			t_stop();
 			in_progress = false;
 			
-			result_string = ldr.data as String;
+			result_bin = new ByteArray();
+			var t:ByteArray = ldr.data as ByteArray;
+			if (t != null) { t.readBytes(result_bin); }
 			
 			ldr_active(false);
+			
+			/*
+			CONFIG::LLOG { log(' result_bin=' + result_bin, 0x888888); }
+			CONFIG::LLOG { log(' result_bin=' + result_bin as String, 0x888888); }
+			CONFIG::LLOG { log(' get_data=' + get_data(), 0x888888); }
+			if (result_bin != null) { CONFIG::LLOG { log(' result_bin.len=' + result_bin.length, 0x888888); } }
+			/**/
 			
 			if (on_complete != null) { on_complete(); }
 			

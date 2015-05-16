@@ -62,12 +62,14 @@ package org.plazy {
 			for (var index:int = 0; index < _pattern.length; index++) {
 				
 				switch (_pattern.charAt(index)) {
-					case 'c': {
+					case 'c':
+					case 'b': {
 						if (_bytes.bytesAvailable < 1) { return null; }
 						results.push(_bytes.readByte());
 						break;
 					}
-					case 'C': {
+					case 'C':
+					case 'B': {
 						if (_bytes.bytesAvailable < 1) { return null; }
 						results.push(_bytes.readUnsignedByte());
 						break;

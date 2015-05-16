@@ -206,6 +206,10 @@ package org.plazy.partners.mailru {
 					user.ava_45px      = u['pic_small'];
 					user.ava_600px     = u['pic_big'];
 					user.link          = u['link'];
+					if (u['location'] != null) {
+						user.city          = u['location']['city'] != null ? u['location']['city']['name'] : null;
+						user.country       = u['location']['country'] != null ? u['location']['country']['name'] : null;
+					}
 					users_list.push(user);
 				}
 				

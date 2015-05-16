@@ -9,14 +9,15 @@
 
 package org.plazy {
 	
-	import org.plazy.hc.HCKeyCather;
-	
+	//import com.demonsters.debugger.MonsterDebugger;
+	import flash.display.InteractiveObject;
+	import flash.display.Stage;
+	import flash.external.ExternalInterface;
+	import flash.system.Capabilities;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.getTimer;
-	import flash.system.Capabilities;
-	import flash.display.Stage;
-	import flash.display.InteractiveObject;
+	import org.plazy.hc.HCKeyCather;
 	
 	final public class Logger {
 		
@@ -193,11 +194,31 @@ package org.plazy {
 			
 		}
 		
+		private function d02 (_v:int):String {
+			return (_v < 10 ? '0' : '') + String(_v);
+		}
+		private function d03 (_v:int):String {
+			return (_v < 10 ? '00' : (_v < 100 ? '0' : '')) + String(_v);
+		}
+		
 		public function add (_txt:String, _col:uint = 0x000000, _type:String = ''):void {
 			var dt:Date = new Date();
-			var tm:String = dt.toString().split(' ')[3] + '.' + String(dt.getTime()).substr(-3);
+			//var tm:String = dt.toString().split(' ')[3] + '.' + String(dt.getTime()).substr(-3);
+			var tm:String = d02(dt.hours) + d02(dt.minutes) + d02(dt.seconds) + '.' + d03(dt.milliseconds);
+			var ln:String = tm + ' ' + name + ' ' + _txt;
 			
-			trace(tm + ' ' + name + ' ' + _txt);
+			if (ExternalInterface.available) {
+				ln = ln.replace(/<(b|u)>(.+)<\/(b|u)>/i, '$2');
+				ln = ln.replace(/<font color="#([0-f]+)">(.+)<\/font>/i, '$2');
+				ln = ln.replace(/&lt;/i, '<');
+				switch (_col) {
+					case 0x990000: { ExternalInterface.call('console.error', ln); break; }
+					case 0x000099: { ExternalInterface.call('console.info', ln); break; }
+					default: { ExternalInterface.call('console.log', ln); }
+				}
+			}
+			trace(ln);
+			//MonsterDebugger.trace(this, tm + ' ' + name + ' ' + _txt);
 			
 			/*
 			if (_col == 0xFF0000 && Capabilities.isDebugger) {
@@ -223,7 +244,12 @@ package org.plazy {
 			if (_t == null) { return ''; }
 			return _t.split('<').join('&lt;');
 		}
-		
+		/*
+		public function unquote (_t:String):String {
+			if (_t == null) { return ''; }
+			return _t.split('&lt;').join('<');
+		}
+		*/
 		public function top ():void {
 			var e:Error = new Error();
 			add('StackTrace: ' + e.getStackTrace(), 0xFF0000);

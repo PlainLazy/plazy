@@ -19,6 +19,10 @@ package org.plazy.partners.vkontakte.profiles {
 		public var photo:String;
 		public var photo_medium:String;
 		public var photo_big:String;
+		public var city_id:uint;
+		public var city_name:String;
+		public var country_id:uint;
+		public var country_name:String;
 		
 		public function DiVkProfileData () { }
 		
@@ -29,7 +33,7 @@ package org.plazy.partners.vkontakte.profiles {
 		
 		CONFIG::LLOG {
 			public function toString ():String {
-				return '{DiVkProfileData: uid=' + uid + ' first_name=' + first_name + ' last_name=' + last_name + ' nickname=' + nickname + ' sex=' + sex + ' photo=' + photo + ' photo_medium=' + photo_medium + ' photo_big=' + photo_big + '}';
+				return '{DiVkProfileData: uid=' + uid + ' first_name=' + first_name + ' last_name=' + last_name + ' nickname=' + nickname + ' sex=' + sex + ' photo=' + photo + ' photo_medium=' + photo_medium + ' photo_big=' + photo_big + ' city=' + city_id + ',' + city_name + ' country=' + country_id + ',' + country_name + '}';
 			}
 		}
 		

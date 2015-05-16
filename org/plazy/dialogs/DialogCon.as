@@ -11,6 +11,7 @@ package org.plazy.dialogs {
 	
 	import org.plazy.Locker;
 	import org.plazy.BaseObject;
+	import org.plazy.Omni;
 	import org.plazy.StageController;
 	import org.plazy.BaseDisplayObject;
 	import org.plazy.dialogs.instaces.DialogBase;
@@ -37,6 +38,10 @@ package org.plazy.dialogs {
 		
 		public function init (_cont:BaseDisplayObject):void {
 			cont = _cont;
+		}
+		
+		public function is_empty ():Boolean {
+			return current == null;
 		}
 		
 		public function reset ():void {
@@ -107,6 +112,8 @@ package org.plazy.dialogs {
 				}
 			}
 			
+			Omni.me.call('DialogConChanged');
+			
 			return true;
 		}
 		
@@ -165,6 +172,8 @@ package org.plazy.dialogs {
 			} else {
 				CONFIG::LLOG { log('dialog not founded for close', 0x990000); }
 			}
+			
+			Omni.me.call('DialogConChanged');
 			
 			return true;
 		}

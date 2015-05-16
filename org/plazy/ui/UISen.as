@@ -96,6 +96,7 @@ package org.plazy.ui {
 			graphics.clear();
 			if (_w <= 0 || _h <= 0) { return; }
 			graphics.beginFill(0xFFFF00, 0);
+			//CONFIG::LLOG { graphics.beginFill(0xFFFF00, 0.2); }
 			graphics.drawRect(0, 0, _w, _h);
 			graphics.endFill();
 		}

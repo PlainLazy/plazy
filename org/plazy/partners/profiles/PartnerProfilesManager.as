@@ -127,7 +127,8 @@ package org.plazy.partners.profiles {
 					params.push('uids=' + actual_ids.join(','));
 					params.push('fields=uid,first_name,last_name,nickname,sex,photo,photo_medium,photo_big');
 					params.push('name_case=nom');
-					return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_GET_PROFILES, params, vk_err_hr, vk_complete_hr, false);
+					//return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_GET_PROFILES, params, vk_err_hr, vk_complete_hr, false);
+					return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_USERS_GET, params, vk_err_hr, vk_complete_hr, false);
 				}
 				case MD_IJ: {
 					return IJetAPI.me.send(IJetAPI.CMD_GET_USERS_PROFILES, {'ids': actual_ids.join(',')}, ijet_complete_hr, true);

@@ -11,15 +11,9 @@ package org.plazy {
 	
 	final public class FlashVars {
 		
-		// static
-		
 		public static const me:FlashVars = new FlashVars();
 		
-		// base
-		
 		private var params:Object;  // key: flashvars_key, value: flashvars_value
-		
-		// constructor
 		
 		public function FlashVars () { }
 		
@@ -39,6 +33,10 @@ package org.plazy {
 				CONFIG::LLOG { log(' ' + key + ' = ' + params[key], 0x888888); }
 			}
 			
+		}
+		
+		public function rem (k:String):void {
+			delete params[k];
 		}
 		
 		public function add (_obj:Object, _rewrite:Boolean):void {

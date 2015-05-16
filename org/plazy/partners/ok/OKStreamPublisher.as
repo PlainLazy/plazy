@@ -50,7 +50,7 @@ package org.plazy.partners.ok {
 			Odnoklassniki.addEventListener(ApiCallbackEvent.CALL_BACK, callback_hr, false, 0, true);
 			
 			var att:Object = {"caption":_message, "media":[{"href":"link","src":_img,"type":"image"}]};
-			var att_str:String = _img != null ? JSON.encode(att) : null;
+			var att_str:String = _img != null ? com.adobe.serialization.json.JSON.encode(att) : null;
 			
 			var links:Array = [];
 			if (_lnk1t != null && _lnk1h != null) { links.push({'text':_lnk1t,'href':_lnk1h}); }

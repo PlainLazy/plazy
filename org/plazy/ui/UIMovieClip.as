@@ -9,11 +9,10 @@
 
 package org.plazy.ui {
 	
-	import org.plazy.Err;
-	import org.plazy.BaseDisplayObject;
-	import org.plazy.hc.HCFramer;
-	
 	import flash.display.MovieClip;
+	import org.plazy.BaseDisplayObject;
+	import org.plazy.Err;
+	import org.plazy.hc.HCFramer;
 	
 	final public class UIMovieClip extends BaseDisplayObject {
 		
@@ -55,7 +54,9 @@ package org.plazy.ui {
 			super.kill();
 		}
 		
-		public function init (_mc:MovieClip):void {
+		public function init2 (_mc:MovieClip):void {
+			if (!super.init()) { return; }
+			
 			rem_mc();
 			framer.rem_frame();
 			

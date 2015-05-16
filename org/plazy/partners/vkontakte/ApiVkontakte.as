@@ -30,7 +30,9 @@ package org.plazy.partners.vkontakte {
 		
 		public static const me:ApiVkontakte = new ApiVkontakte();
 		
-		public static const METHOD_GET_PROFILES:String                     = 'getProfiles';
+		//public static const METHOD_GET_PROFILES:String                     = 'getProfiles';    // depricated
+		public static const METHOD_USERS_GET:String                        = 'users.get';        // new
+		
 		public static const METHOD_GET_FRIENDS:String                      = 'getFriends';     // depricated
 		public static const METHOD_GET_APP_FRIENDS:String                  = 'getAppFriends';  // depricated
 		public static const METHOD_GET_GROUPS:String                       = 'getGroups';
@@ -40,7 +42,7 @@ package org.plazy.partners.vkontakte {
 		public static const METHOD_GET_FRIENDS_ONLINE:String               = 'friends.getOnline';    // new
 		
 		public static const METHOD_GET_USER_SETTINGS:String                = 'getUserSettings';
-		public static const METHOD_GET_USER_BALANCE:String                 = 'getUserBalance';
+		/*//*/public static const METHOD_GET_USER_BALANCE:String                 = 'getUserBalance';   // removed by new playment system
 		public static const METHOD_WALL_GET_GET_PHOTO_UPLOAD_SERVER:String = 'wall.getPhotoUploadServer';   // depricated
 		public static const METHOD_PHOTOS_GET_WALL_UPLOAD_SERVER:String    = 'photos.getWallUploadServer';  // new
 		public static const METHOD_PHOTOS_SEVE_WALL_PHOTO:String           = 'photos.saveWallPhoto';  // new
@@ -51,6 +53,9 @@ package org.plazy.partners.vkontakte {
 		
 		public static const METHOD_STORAGE_GET:String                      = 'storage.get';
 		public static const METHOD_STORAGE_SET:String                      = 'storage.set';
+		
+		public static const METHOD_GET_COUNTRY_BY_ID:String                = 'places.getCountryById';
+		public static const METHOD_GET_CITY_BY_ID:String                   = 'places.getCityById';
 		
 		//	+1	Пользователь разрешил отправлять ему уведомления.
 		//	+2	Доступ к друзьям.
@@ -224,6 +229,21 @@ package org.plazy.partners.vkontakte {
 			if (current_request.lock) { Locker.me.active = true; }
 			
 			var params_list:Vector.<String> = current_request.params.concat();
+			var params_hash:Object = {};
+			var param_value:String;
+			var param_pair:Array;
+			
+			if (app_data.access_token != null) {
+				params_list
+				params_list.push('access_token=' + app_data.access_token);
+				for each (param_value in params_list) {
+					param_pair = param_value.split('=', 2);
+					if (param_pair.length != 2) { return error_def_hr('invalid param "' + param_value + '"'); }
+					params_hash[param_pair[0]] = param_pair[1];
+				}
+				return ldr.load('https://api.vk.com/method/' + current_request.method, 'GET', params_hash);
+			}
+			
 			params_list.push('api_id=' + app_data.api_id);
 			params_list.push('v=3.0');
 			params_list.push('method=' + current_request.method);
@@ -235,9 +255,6 @@ package org.plazy.partners.vkontakte {
 			params_list.push('sig=' + MD5.hash(app_data.viewer_id + params_list.join('') + app_data.secret));
 			params_list.push('sid=' + app_data.sid);
 			
-			var params_hash:Object = {};
-			var param_value:String;
-			var param_pair:Array;
 			for each (param_value in params_list) {
 				param_pair = param_value.split('=', 2);
 				if (param_pair.length != 2) { return error_def_hr('invalid param "' + param_value + '"'); }
@@ -299,7 +316,7 @@ package org.plazy.partners.vkontakte {
 			current_request = null;
 			
 			var obj:Object;
-			try { obj = JSON.decode(loaded_data); }
+			try { obj = com.adobe.serialization.json.JSON.decode(loaded_data); }
 			catch (e:Error) { return error_def_hr('invalid api JSON format: ' + StringUtils.html_safe(String(e))); }
 			var err:Object = obj['error'];
 			if (err != null) {

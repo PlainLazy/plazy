@@ -21,14 +21,18 @@ package org.plazy {
 		public function set onError (_f:Function):void { on_error = _f; }
 		
 		public function call (_ev:String, ... _params:Array):Boolean {
-			//CONFIG::LLOG { log('call ' + _ev); }
+			//CONFIG::LLOG { log(' *** call ' + _ev); }
 			var ar:Vector.<OmniHandler> = hash[_ev];
 			if (ar == null) { return true; }
 			
 			var handler:OmniHandler;
 			for each (handler in ar) {
 				//CONFIG::LLOG { log(' // handler ' + handler, 0x888888); }
-				if (!handler.hr.apply(null, _params)) { return false; }
+				if (!handler.hr.apply(null, _params)) {
+					CONFIG::LLOG { log('call "' + _ev + '" failed', 0x990000); }
+					return false;
+				}
+				//CONFIG::LLOG { log(' *** call ' + _ev + ' applyed'); }
 			}
 			
 			return true;

@@ -111,7 +111,8 @@ package org.plazy.partners.ok {
 			busy = true;
 			
 			var uids1:Array = []; for each (var uid1:String in uids) { uids1.push(uid1); }
-			Users.getInfo(uids1, ['uid', 'first_name', 'last_name', 'name', 'gender', 'pic_1', 'pic_2', 'pic_3', 'pic_4', 'url_profile'], api_complete_hr);
+			//Users.getInfo(uids1, ['uid', 'first_name', 'last_name', 'name', 'gender', 'pic_1', 'pic_2', 'pic_3', 'pic_4', 'url_profile'], api_complete_hr);
+			Users.getInfo(uids1, ['uid', 'first_name', 'last_name', 'name', 'gender', 'pic_1', 'pic_2', 'pic_3', 'pic_4', 'url_profile', 'location'], api_complete_hr);
 			return true;
 		}
 		
@@ -153,6 +154,13 @@ package org.plazy.partners.ok {
 						user.pic_3         = u['pic_3'];
 						user.pic_4         = u['pic_4'];
 						user.url_profile   = u['url_profile'];
+						
+						var location:Object = u['location'];
+						if (location != null) {
+							user.city        = location['city'];
+							user.country     = location['country'];
+						}
+						
 						users_list.push(user);
 					}
 				}

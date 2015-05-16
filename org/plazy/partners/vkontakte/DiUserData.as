@@ -20,9 +20,10 @@ package org.plazy.partners.vkontakte {
 		public function DiUserData () { }
 		
 		public function get_nick ():String {
-			if (nickname != null && nickname.length > 1) {
-				return nickname;
-			}
+			// ник часто бывает кривым или ниочем, так что берем имяи фамилию
+			//if (nickname != null && nickname.length > 1) {
+			//	return nickname;
+			//}
 			return get_name();
 		}
 		

@@ -9,11 +9,9 @@
 
 package org.plazy.ui {
 	
-	import org.plazy.Err;
-	import org.plazy.BaseDisplayObject;
-	
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import org.plazy.BaseDisplayObject;
 	
 	public class UILocker extends BaseDisplayObject implements IUILocker {
 		
@@ -42,7 +40,7 @@ package org.plazy.ui {
 		private var fade_color:int = 0x000000;
 		private var fade_alpha:Number = 0.6;
 		
-		// objects
+		// views
 		
 		private var cont:BaseDisplayObject;
 		

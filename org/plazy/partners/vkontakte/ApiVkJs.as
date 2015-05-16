@@ -81,9 +81,23 @@ package org.plazy.partners.vkontakte {
 			ready_tiker_hr();
 		}
 		
+		/**/  // removed by new payment system
 		public function show_payment_box (_votes:int):void {
 			CONFIG::LLOG { log('show_payment_box ' + _votes); }
 			ExternalInterface.call('showPaymentBox', _votes);
+			ready_tiker_hr();
+		}
+		/**/
+		
+		public function show_order_box (_votes:int):void {
+			CONFIG::LLOG { log('show_order_box ' + _votes); }
+			ExternalInterface.call('showOrderBox', _votes);
+			ready_tiker_hr();
+		}
+		
+		public function show_order_box_item (_item:String):void {
+			CONFIG::LLOG { log('show_order_box_item ' + _item); }
+			ExternalInterface.call('showOrderBoxItem', _item);
 			ready_tiker_hr();
 		}
 		
@@ -152,7 +166,7 @@ package org.plazy.partners.vkontakte {
 			event_index++;
 			
 			var obj:Object;
-			try { obj = JSON.decode(ev); }
+			try { obj = com.adobe.serialization.json.JSON.decode(ev); }
 			catch (e:Error) {
 				CONFIG::LLOG { log('JSON decode failed: ' + e, 0x990000); }
 				return;
@@ -160,38 +174,19 @@ package org.plazy.partners.vkontakte {
 			
 			for (var id:String in obj) {
 				switch (id) {
-					case 'onAppAdded': {
-						Omni.me.call('VkAppAdded');
-						break;
-					}
-					case 'onSettingsChanged': {
-						Omni.me.call('onSettingsChanged', int(obj[id]));
-						break;
-					}
-					case 'onWindowBlur': {
-						if (on_unfocus != null) { on_unfocus(); }
-						break;
-					}
-					case 'onWindowFocus': {
-						if (on_focus != null) { on_focus(); }
-						break;
-					}
-					case 'onBalanceChanged': {
-						Omni.me.call('VkUserBalanceChanged', int(obj[id]));
-						break;
-					}
-					case 'onWallPostSave': {
-						Omni.me.call('VkWallPostSave');
-						break;
-					}
-					case 'onWallPostCancel': {
-						Omni.me.call('VkWallPostCancel');
-						break;
-					}
-					case 'onWallPostResponse': {
-						Omni.me.call('VkWallPostResponse');
-						break;
-					}
+					case 'onAppAdded': { Omni.me.call('VkAppAdded'); break; }
+					case 'onSettingsChanged': { Omni.me.call('onSettingsChanged', int(obj[id])); break; }
+					case 'onWindowBlur': { if (on_unfocus != null) { on_unfocus(); } break; }
+					case 'onWindowFocus': { if (on_focus != null) { on_focus(); } break; }
+					
+					//case 'onBalanceChanged': { Omni.me.call('VkUserBalanceChanged', int(obj[id])); break; }  // removed by new payment system
+					case 'onBalanceChanged': { Omni.me.call('VKOrderCancel'); break; }                // added by new payment system
+					case 'onOrderSuccess': { Omni.me.call('VKOrderSuccess', int(obj[id])); break; }   // added by new payment system
+					case 'onOrderFail': { Omni.me.call('VKOrderFail', int(obj[id])); break; }         // added by new payment system
+					
+					case 'onWallPostSave': { Omni.me.call('VkWallPostSave'); break; }
+					case 'onWallPostCancel': { Omni.me.call('VkWallPostCancel'); break; }
+					case 'onWallPostResponse': { Omni.me.call('VkWallPostResponse'); break; }
 					default: {
 						CONFIG::LLOG { log('unhandled event ' + id, 0x990000); }
 					}

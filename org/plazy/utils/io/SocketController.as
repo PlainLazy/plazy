@@ -116,7 +116,8 @@ package org.plazy.utils.io {
 		}
 		
 		public function send (_bytes:ByteArray):void {
-			log('send ' + Bytes.dump_to_str(_bytes));
+			//CONFIG::LLOG { log('send ' + Bytes.dump_to_str(_bytes)); }
+			CONFIG::LLOG { log('send ' + _bytes.length + ' bytes'); }
 			
 			if (!is_connected || !soc.connected) {
 				CONFIG::LLOG { log('ERR: socket not conected', 0xFF0000) }

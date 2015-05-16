@@ -31,8 +31,10 @@ package org.plazy.partners.vkontakte {
 		
 		// const
 		
-		public const WALL_PHOTO_MAX_WIDTH:int  = 130;
-		public const WALL_PHOTO_MAX_HEIGHT:int = 130;
+		//public const WALL_PHOTO_MAX_WIDTH:int  = 130;
+		//public const WALL_PHOTO_MAX_HEIGHT:int = 130;
+		public const WALL_PHOTO_MAX_WIDTH:int  = 1024;
+		public const WALL_PHOTO_MAX_HEIGHT:int = 1024;
 		
 		// vars
 		
@@ -182,7 +184,7 @@ package org.plazy.partners.vkontakte {
 			var data:String = bytes.readUTFBytes(bytes.bytesAvailable);
 			
 			var obj:Object;
-			try { obj = JSON.decode(data); }
+			try { obj = com.adobe.serialization.json.JSON.decode(data); }
 			catch (e:Error) { return error_ext_hr('JSON.decode failed', e); }
 			
 			CONFIG::LLOG {

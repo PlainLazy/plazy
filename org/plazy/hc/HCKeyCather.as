@@ -36,6 +36,7 @@ package org.plazy.hc {
 		private var event:String;
 		
 		public var with_shift:Boolean;
+		public var with_alt:Boolean;
 		public var ignore_tf:Boolean;
 		
 		// constructor
@@ -78,6 +79,7 @@ package org.plazy.hc {
 			if (handler == null) { return; }
 			if (_e.keyCode != key) { return; }
 			if (with_shift && !_e.shiftKey) { return; }
+			if (with_alt && !_e.altKey) { return; }
 			var tc:String = 'flash.text::TextField';
 			if (ignore_tf && (getQualifiedClassName(stg.focus) == tc || getQualifiedSuperclassName(stg.focus) == tc)) { return; }
 			try { handler(); }

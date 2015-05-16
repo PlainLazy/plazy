@@ -197,7 +197,7 @@ package org.plazy.partners.mailru {
 			if (current_request == null) { return error_def_hr('current_request is null, unwaited ldr data'); }
 			
 			var dat:Object;
-			try { dat = JSON.decode(loaded_data); }
+			try { dat = com.adobe.serialization.json.JSON.decode(loaded_data); }
 			catch (e:Error) { return error_def_hr('JSON decode failed: ' + e); }
 			
 			var current_error_hr:Function = current_request.on_error;

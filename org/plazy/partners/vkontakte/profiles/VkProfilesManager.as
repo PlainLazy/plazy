@@ -113,10 +113,11 @@ package org.plazy.partners.vkontakte.profiles {
 			
 			var params:Vector.<String> = new Vector.<String>();
 			params.push('uids=' + uids.join(','));
-			params.push('fields=uid,first_name,last_name,nickname,sex,photo,photo_medium,photo_big');
+			params.push('fields=uid,first_name,last_name,nickname,sex,photo,photo_medium,photo_big,city,country');
 			params.push('name_case=nom');
 			
-			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_GET_PROFILES, params, api_err_hr, api_complete_hr, false);
+			//return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_GET_PROFILES, params, api_err_hr, api_complete_hr, false);
+			return ApiVkontakte.me.request_send(ApiVkontakte.METHOD_USERS_GET, params, api_err_hr, api_complete_hr, false);
 		}
 		
 		private function api_err_hr (_code:int, _msg:String):Boolean {
@@ -164,6 +165,8 @@ package org.plazy.partners.vkontakte.profiles {
 					user_di.photo         = user['photo'];
 					user_di.photo_medium  = user['photo_medium'];
 					user_di.photo_big     = user['photo_big'];
+					user_di.city_id       = user['city'];
+					user_di.country_id    = user['country'];
 					users_list.push(user_di);
 				}
 				

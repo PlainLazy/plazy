@@ -9,6 +9,7 @@
 
 package org.plazy {
 	
+	import flash.utils.Dictionary;
 	import org.plazy.ui.UILocker;
 	import org.plazy.ui.IUILocker;
 	
@@ -16,7 +17,7 @@ package org.plazy {
 		
 		public static var me:Locker = new Locker();
 		
-		private var list:Object = {};  // id:String -> val:IUILocker
+		private var list:Dictionary = new Dictionary();  // id:String -> val:IUILocker
 		
 		public function Locker () { }
 		
@@ -44,7 +45,7 @@ package org.plazy {
 				return;
 			}
 			
-			trace('Locker active ' + _id);
+			//trace('Locker active ' + _id);
 			//trace(' ' + (new Error()).getStackTrace());
 			
 			var locker:UILocker = list[_id] as UILocker;
@@ -59,7 +60,7 @@ package org.plazy {
 		}
 		
 		public function set deactive (_id:String):void {
-			trace('Locker deactive ' + _id);
+			//trace('Locker deactive ' + _id);
 			//trace(' ' + (new Error()).getStackTrace());
 			
 			var locker:UILocker = list[_id] as UILocker;

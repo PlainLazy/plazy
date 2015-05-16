@@ -21,6 +21,8 @@ package org.plazy.partners.ok {
 		public var pic_3:String;
 		public var pic_4:String;
 		public var url_profile:String;
+		public var country:String;
+		public var city:String;
 		
 		public function OKProfileData () { }
 		
@@ -31,7 +33,7 @@ package org.plazy.partners.ok {
 		
 		CONFIG::LLOG {
 			public function toString ():String {
-				return '{OKProfileData: uid=' + uid + ' first_name=' + first_name + ' last_name=' + last_name + ' name=' + name + ' gender=' + gender + ' pics=' + pic_1 + ',' + pic_2 + ',' + pic_3 + ',' + pic_4 + ' url_profile=' + url_profile + '}';
+				return '{OKProfileData: uid=' + uid + ' first_name=' + first_name + ' last_name=' + last_name + ' name=' + name + ' gender=' + gender + ' pics=' + pic_1 + ',' + pic_2 + ',' + pic_3 + ',' + pic_4 + ' url_profile=' + url_profile + ' country=' + country + ' city=' + city + '}';
 			}
 		}
 		

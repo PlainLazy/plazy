@@ -10,10 +10,7 @@
 package org.plazy.partners.vkontakte {
 	
 	import org.plazy.FlashVars;
-	
-	CONFIG::LLOG {
-		import org.plazy.Logger;
-	}
+	CONFIG::LLOG { import org.plazy.Logger; }
 	
 	public class DiApplicationData {
 		
@@ -48,6 +45,8 @@ package org.plazy.partners.vkontakte {
 		public var language:String;
 		public var api_result:String;
 		public var api_settings:String;
+		
+		public var access_token:String;
 		
 		public function DiApplicationData () { }
 		
